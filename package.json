@@ -18,6 +18,7 @@
     "node-firebird": "^2.16.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   }

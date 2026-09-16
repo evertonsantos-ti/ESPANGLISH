@@ -5,3 +5,4 @@ dist/
 # Arquivos/extensões
 .env
 *.log
+*.fdb
