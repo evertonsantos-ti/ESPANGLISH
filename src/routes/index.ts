@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { query } from "../database/query";
+import { EventoRepository } from "../repositories/evento.repository";
+import { EventoService } from "../services/evento.service";
+import { EventoController } from "../controllers/evento.controller";
+
+const eventoRepository = new EventoRepository();
+const eventoService = new EventoService(eventoRepository);
+const eventoController = new EventoController(eventoService);
 
 const router = Router();
 
@@ -10,23 +16,8 @@ router.get("/health", (_req, res) => {
   });
 });
 
-// DATABASE
-router.get("/database", async (_req, res) => {
-  try {
-    const result = await query("SELECT 1 AS TESTE FROM RDB$DATABASE");
-
-    res.json({
-      status: "ok",
-      service: "ESPANGLISH",
-      database: result[0],
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: "error",
-      service: "ESPANGLISH",
-      database: "not connected",
-    });
-  }
+// Eventos
+router.get("/eventos", (req, res) => {
+  eventoController.listar(req, res);
 });
-
 export default router;
