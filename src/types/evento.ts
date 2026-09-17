@@ -5,3 +5,9 @@ export interface Evento {
   dataFim: Date;
   ativo: Boolean;
 }
+
+export interface CriarEvento {
+  nome: string;
+  dataInicio: Date;
+  dataFim: Date;
+}

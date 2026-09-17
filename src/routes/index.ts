@@ -18,6 +18,9 @@ router.get("/health", (_req, res) => {
 
 // Eventos
 router.get("/eventos", (req, res) => {
-  eventoController.listar(req, res);
+  return eventoController.listar(req, res);
+});
+router.post("/eventos", (req, res) => {
+  return eventoController.criar(req, res);
 });
 export default router;
