@@ -29,4 +29,10 @@ router.post("/eventos/inativar-eventos-vencidos", (req, res) => {
 router.put("/eventos/:id", (req, res) => {
   return container.eventoController.alterar(req, res);
 });
+
+// Equipes ----------------------------------------------------------------------------
+// GET
+router.get("/equipes", (req, res) => {
+  return container.equipeController;
+});
 export default router;
