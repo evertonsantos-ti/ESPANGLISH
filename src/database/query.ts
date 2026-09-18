@@ -58,3 +58,23 @@ export function queryOne<T = unknown>(
     });
   });
 }
+
+export function execute(sql: string, params: unknown[] = []): Promise<void> {
+  return new Promise((resolve, reject) => {
+    pool.get((error, db) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      db.query(sql, params, (queryError) => {
+        db.detach();
+
+        if (queryError) {
+          reject(queryError);
+          return;
+        }
+        resolve();
+      });
+    });
+  });
+}

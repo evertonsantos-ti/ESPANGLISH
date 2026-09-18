@@ -28,6 +28,9 @@ router.get("/eventos/:id", (req, res) => {
 router.post("/eventos", (req, res) => {
   return eventoController.criar(req, res);
 });
+router.post("/eventos/inativar-eventos-vencidos", (req, res) => {
+  return eventoController.inativarEventosVencidos(req, res);
+});
 // PUT
 router.put("/eventos/:id", (req, res) => {
   return eventoController.alterar(req, res);

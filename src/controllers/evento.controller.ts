@@ -32,7 +32,6 @@ export class EventoController {
   }
 
   async alterar(req: Request, res: Response) {
-    // console.log(validatorDict(req.body, "Evento"));
     if (!req.params.id || !req.body) {
       throw new ValidationError(
         "Os requisitos para atualização não foram atendidos!",
@@ -51,5 +50,13 @@ export class EventoController {
     );
 
     return res.status(200).json(evento);
+  }
+
+  async inativarEventosVencidos(req: Request, res: Response) {
+    await this.service.inativarEventosVencidos();
+
+    return res
+      .status(200)
+      .json({ message: "Eventos vencidos foram inativados." });
   }
 }

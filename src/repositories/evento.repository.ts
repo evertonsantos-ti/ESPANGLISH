@@ -1,4 +1,4 @@
-import { query, queryOne } from "../database/query";
+import { execute, query, queryOne } from "../database/query";
 import { Evento, CriarEvento, AtualizarEvento } from "../types/evento";
 
 interface EventoRow {
@@ -122,5 +122,9 @@ export class EventoRepository {
       dataFim: registro.DATA_FIM,
       ativo: registro.ATIVO,
     };
+  }
+
+  async inativarEventosVencidos(): Promise<void> {
+    await execute(`EXECUTE PROCEDURE INATIVAR_EVENTOS_VENCIDOS;`);
   }
 }

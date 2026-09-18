@@ -26,4 +26,8 @@ export class EventoService {
 
     return evento;
   }
+
+  async inativarEventosVencidos(): Promise<void> {
+    return this.repository.inativarEventosVencidos();
+  }
 }
