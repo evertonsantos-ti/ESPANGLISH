@@ -28,7 +28,7 @@ export function query<T = unknown>(
 export function queryOne<T = unknown>(
   sql: string,
   params: unknown[] = [],
-): Promise<T> {
+): Promise<T | null> {
   return new Promise((resolve, reject) => {
     pool.get((error, db) => {
       if (error) {
@@ -40,6 +40,16 @@ export function queryOne<T = unknown>(
 
         if (queryError) {
           reject(queryError);
+          return;
+        }
+
+        if (Array.isArray(result)) {
+          if (result.length === 0) {
+            resolve(null);
+            return;
+          }
+
+          resolve(result[0] as T);
           return;
         }
 

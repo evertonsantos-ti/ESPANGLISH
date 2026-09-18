@@ -12,7 +12,7 @@ async function startServer() {
     await testConnection();
     logger.info(`> Conexão com FireBird Estabelecida.\n`);
 
-    logger.info(` #-------------- Iniciando Servidor --------------#\n`);
+    logger.info(`#-------------- Iniciando Servidor --------------#\n`);
     app.listen(config.port, () => {
       logger.info(`> Servidor iniciado:`);
       logger.info(`> http://${config.host}:${config.port}/api/`);

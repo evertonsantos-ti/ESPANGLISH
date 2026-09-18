@@ -8,6 +8,9 @@ export class EventoService {
   async listar(): Promise<Evento[]> {
     return this.repository.listar();
   }
+  async buscarPorId(id: number): Promise<Evento | null> {
+    return this.repository.buscarPorId(id);
+  }
 
   async criar(dados: CriarEvento): Promise<Evento> {
     if (dados.nome.trim() === "" || dados.nome.length > 100) {

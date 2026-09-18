@@ -6,6 +6,11 @@ export class EventoController {
   constructor(private readonly service: EventoService) {}
 
   async listar(req: Request, res: Response) {
+    if (req.params.id) {
+      const eventos = await this.service.buscarPorId(Number(req.params.id));
+      console.log(eventos);
+      return res.json(eventos);
+    }
     const eventos = await this.service.listar();
     return res.json(eventos);
   }

@@ -16,11 +16,17 @@ router.get("/health", (_req, res) => {
   });
 });
 
-// Eventos
+// Eventos ----------------------------------------------------------------------------
+// GET
 router.get("/eventos", (req, res) => {
   return eventoController.listar(req, res);
 });
+router.get("/eventos/:id", (req, res) => {
+  return eventoController.listar(req, res);
+});
+// POST
 router.post("/eventos", (req, res) => {
   return eventoController.criar(req, res);
 });
+// PUT
 export default router;

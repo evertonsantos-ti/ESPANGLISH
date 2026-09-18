@@ -31,6 +31,27 @@ export class EventoRepository {
     }));
   }
 
+  async buscarPorId(id: number): Promise<Evento | null> {
+    const registro = await queryOne<EventoRow>(
+      `
+      SELECT *
+        FROM EVENTO
+        WHERE ID = ?`,
+      [id],
+    );
+    if (registro === null) {
+      return null;
+    }
+
+    return {
+      id: registro.ID,
+      nome: registro.NOME,
+      dataInicio: registro.DATA_INICIO,
+      dataFim: registro.DATA_FIM,
+      ativo: registro.ATIVO,
+    };
+  }
+
   async criar(dados: CriarEvento): Promise<Evento> {
     const registro = await queryOne<EventoRow>(
       `
@@ -49,7 +70,6 @@ export class EventoRepository {
       `,
       [dados.nome, dados.dataInicio, dados.dataFim],
     );
-
     if (!registro) {
       throw new Error("Evento não foi retornado após a criação");
     }
