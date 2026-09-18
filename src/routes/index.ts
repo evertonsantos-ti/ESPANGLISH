@@ -29,4 +29,7 @@ router.post("/eventos", (req, res) => {
   return eventoController.criar(req, res);
 });
 // PUT
+router.put("/eventos/:id", (req, res) => {
+  return eventoController.alterar(req, res);
+});
 export default router;

@@ -1,6 +1,6 @@
 import { EventoRepository } from "../repositories/evento.repository";
-import { CriarEvento, Evento } from "../types/evento";
-import { ValidationError } from "../utils/error";
+import { CriarEvento, Evento, AtualizarEvento } from "../types/evento";
+import { NotFoundError } from "../utils/error";
 
 export class EventoService {
   constructor(private readonly repository: EventoRepository) {}
@@ -8,19 +8,22 @@ export class EventoService {
   async listar(): Promise<Evento[]> {
     return this.repository.listar();
   }
+
   async buscarPorId(id: number): Promise<Evento | null> {
     return this.repository.buscarPorId(id);
   }
 
   async criar(dados: CriarEvento): Promise<Evento> {
-    if (dados.nome.trim() === "" || dados.nome.length > 100) {
-      throw new ValidationError("O nome do evento está fora do padrão");
-    }
-    if (dados.dataFim < dados.dataInicio) {
-      throw new ValidationError(
-        "Data final não pode ser anterior a data incial",
-      );
-    }
     return this.repository.criar(dados);
+  }
+
+  async alterar(id: number, dados: AtualizarEvento): Promise<Evento | null> {
+    const evento = await this.repository.alterar(id, dados);
+
+    if (!evento) {
+      throw new NotFoundError("Não há evento com este (ID)!");
+    }
+
+    return evento;
   }
 }
