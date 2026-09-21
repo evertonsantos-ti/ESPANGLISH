@@ -25,7 +25,9 @@ export class MovimentacaoPontuacaoController {
   }
 
   async criar(req: Request, res: Response) {
-    const item = await this.service.criar(validatorMovimentacaoPontuacao(req.body));
+    const item = await this.service.criar(
+      validatorMovimentacaoPontuacao(req.body),
+    );
     return res.status(201).json(item);
   }
 }

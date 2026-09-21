@@ -25,7 +25,10 @@ export class JuradoRepository {
   }
 
   async buscarPorId(id: number): Promise<Jurado | null> {
-    const registro = await queryOne<JuradoRow>(`SELECT * FROM JURADO WHERE ID = ?`, [id]);
+    const registro = await queryOne<JuradoRow>(
+      `SELECT * FROM JURADO WHERE ID = ?`,
+      [id],
+    );
     if (!registro) return null;
     return {
       id: registro.ID,

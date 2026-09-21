@@ -20,12 +20,21 @@ function map(r: Row | null): Nota | null {
 
 export class NotaRepository {
   async listar(): Promise<Nota[]> {
-    const registros = await query<Row>(`SELECT ID, AVALIACAO_ID, CRITERIO_ID, NOTA FROM NOTA ORDER BY ID`);
-    return registros.map((r) => ({ id: r.ID, idAvaliacao: r.AVALIACAO_ID, idCriterio: r.CRITERIO_ID, nota: r.NOTA }));
+    const registros = await query<Row>(
+      `SELECT ID, AVALIACAO_ID, CRITERIO_ID, NOTA FROM NOTA ORDER BY ID`,
+    );
+    return registros.map((r) => ({
+      id: r.ID,
+      idAvaliacao: r.AVALIACAO_ID,
+      idCriterio: r.CRITERIO_ID,
+      nota: r.NOTA,
+    }));
   }
 
   async buscarPorId(id: number): Promise<Nota | null> {
-    const registro = await queryOne<Row>(`SELECT * FROM NOTA WHERE ID = ?`, [id]);
+    const registro = await queryOne<Row>(`SELECT * FROM NOTA WHERE ID = ?`, [
+      id,
+    ]);
     return map(registro);
   }
 

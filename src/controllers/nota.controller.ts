@@ -31,7 +31,9 @@ export class NotaController {
 
   async alterar(req: Request, res: Response) {
     if (!req.params.id || !req.body) {
-      throw new ValidationError("Os requisitos para atualização não foram atendidos!");
+      throw new ValidationError(
+        "Os requisitos para atualização não foram atendidos!",
+      );
     }
 
     const id = Number(req.params.id);

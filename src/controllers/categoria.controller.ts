@@ -25,13 +25,17 @@ export class CategoriaController {
   }
 
   async criar(req: Request, res: Response) {
-    const categoria = await this.service.criar(validatorCategoria(req.body, "criar"));
+    const categoria = await this.service.criar(
+      validatorCategoria(req.body, "criar"),
+    );
     return res.status(201).json(categoria);
   }
 
   async alterar(req: Request, res: Response) {
     if (!req.params.id || !req.body) {
-      throw new ValidationError("Os requisitos para atualização não foram atendidos!");
+      throw new ValidationError(
+        "Os requisitos para atualização não foram atendidos!",
+      );
     }
 
     const id = Number(req.params.id);
@@ -39,7 +43,10 @@ export class CategoriaController {
       throw new ValidationError("O parâmetro informado deve ser um número");
     }
 
-    const categoria = await this.service.alterar(id, validatorCategoria(req.body, "atualizar"));
+    const categoria = await this.service.alterar(
+      id,
+      validatorCategoria(req.body, "atualizar"),
+    );
     return res.status(200).json(categoria);
   }
 }

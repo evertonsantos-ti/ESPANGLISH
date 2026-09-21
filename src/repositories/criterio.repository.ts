@@ -27,7 +27,10 @@ export class CriterioRepository {
   }
 
   async buscarPorId(id: number): Promise<Criterio | null> {
-    const registro = await queryOne<CriterioRow>(`SELECT * FROM CRITERIO WHERE ID = ?`, [id]);
+    const registro = await queryOne<CriterioRow>(
+      `SELECT * FROM CRITERIO WHERE ID = ?`,
+      [id],
+    );
     if (!registro) return null;
     return {
       id: registro.ID,
@@ -59,7 +62,10 @@ export class CriterioRepository {
     };
   }
 
-  async alterar(id: number, dados: AtualizarCriterio): Promise<Criterio | null> {
+  async alterar(
+    id: number,
+    dados: AtualizarCriterio,
+  ): Promise<Criterio | null> {
     const registro = await queryOne<CriterioRow>(
       `
       UPDATE CRITERIO

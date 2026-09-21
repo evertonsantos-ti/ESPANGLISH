@@ -25,13 +25,17 @@ export class CriterioController {
   }
 
   async criar(req: Request, res: Response) {
-    const criterio = await this.service.criar(validatorCriterio(req.body, "criar"));
+    const criterio = await this.service.criar(
+      validatorCriterio(req.body, "criar"),
+    );
     return res.status(201).json(criterio);
   }
 
   async alterar(req: Request, res: Response) {
     if (!req.params.id || !req.body) {
-      throw new ValidationError("Os requisitos para atualização não foram atendidos!");
+      throw new ValidationError(
+        "Os requisitos para atualização não foram atendidos!",
+      );
     }
 
     const id = Number(req.params.id);
@@ -39,7 +43,10 @@ export class CriterioController {
       throw new ValidationError("O parâmetro informado deve ser um número");
     }
 
-    const criterio = await this.service.alterar(id, validatorCriterio(req.body, "atualizar"));
+    const criterio = await this.service.alterar(
+      id,
+      validatorCriterio(req.body, "atualizar"),
+    );
     return res.status(200).json(criterio);
   }
 }

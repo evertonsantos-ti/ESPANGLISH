@@ -1,5 +1,8 @@
 import { query, queryOne } from "../database/query";
-import { MovimentacaoPontuacao, CriarMovimentacaoPontuacao } from "../types/movimentacaoPontuacao";
+import {
+  MovimentacaoPontuacao,
+  CriarMovimentacaoPontuacao,
+} from "../types/movimentacaoPontuacao";
 
 interface Row {
   ID: number;
@@ -13,7 +16,9 @@ interface Row {
 
 export class MovimentacaoPontuacaoRepository {
   async listar(): Promise<MovimentacaoPontuacao[]> {
-    const registros = await query<Row>(`SELECT ID, EVENTO_ID, EQUIPE_ID, TIPO, DESCRICAO, PONTOS, DATA_LANCAMENTO FROM MOVIMENTACAO_PONTUACAO ORDER BY ID`);
+    const registros = await query<Row>(
+      `SELECT ID, EVENTO_ID, EQUIPE_ID, TIPO, DESCRICAO, PONTOS, DATA_LANCAMENTO FROM MOVIMENTACAO_PONTUACAO ORDER BY ID`,
+    );
     return registros.map((r) => ({
       id: r.ID,
       idEvento: r.EVENTO_ID,
@@ -26,7 +31,10 @@ export class MovimentacaoPontuacaoRepository {
   }
 
   async buscarPorId(id: number): Promise<MovimentacaoPontuacao | null> {
-    const registro = await queryOne<Row>(`SELECT * FROM MOVIMENTACAO_PONTUACAO WHERE ID = ?`, [id]);
+    const registro = await queryOne<Row>(
+      `SELECT * FROM MOVIMENTACAO_PONTUACAO WHERE ID = ?`,
+      [id],
+    );
     if (!registro) return null;
     return {
       id: registro.ID,
@@ -39,17 +47,26 @@ export class MovimentacaoPontuacaoRepository {
     };
   }
 
-  async criar(dados: CriarMovimentacaoPontuacao): Promise<MovimentacaoPontuacao> {
+  async criar(
+    dados: CriarMovimentacaoPontuacao,
+  ): Promise<MovimentacaoPontuacao> {
     const registro = await queryOne<Row>(
       `
       INSERT INTO MOVIMENTACAO_PONTUACAO (EVENTO_ID, EQUIPE_ID, TIPO, DESCRICAO, PONTOS)
       VALUES (?, ?, ?, ?, ?)
       RETURNING ID, EVENTO_ID, EQUIPE_ID, TIPO, DESCRICAO, PONTOS, DATA_LANCAMENTO
     `,
-      [dados.idEvento, dados.idEquipe, dados.tipo, dados.descricao, dados.pontos],
+      [
+        dados.idEvento,
+        dados.idEquipe,
+        dados.tipo,
+        dados.descricao,
+        dados.pontos,
+      ],
     );
 
-    if (!registro) throw new Error("Movimentação não foi retornada após a criação");
+    if (!registro)
+      throw new Error("Movimentação não foi retornada após a criação");
 
     return {
       id: registro.ID,

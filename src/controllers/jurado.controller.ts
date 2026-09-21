@@ -31,7 +31,9 @@ export class JuradoController {
 
   async alterar(req: Request, res: Response) {
     if (!req.params.id || !req.body) {
-      throw new ValidationError("Os requisitos para atualização não foram atendidos!");
+      throw new ValidationError(
+        "Os requisitos para atualização não foram atendidos!",
+      );
     }
 
     const id = Number(req.params.id);
@@ -39,7 +41,10 @@ export class JuradoController {
       throw new ValidationError("O parâmetro informado deve ser um número");
     }
 
-    const jurado = await this.service.alterar(id, validatorJurado(req.body, "atualizar"));
+    const jurado = await this.service.alterar(
+      id,
+      validatorJurado(req.body, "atualizar"),
+    );
     return res.status(200).json(jurado);
   }
 }

@@ -1,7 +1,9 @@
 import { CriarMovimentacaoPontuacao } from "../../types/movimentacaoPontuacao";
 import { ValidationError } from "../error";
 
-export function validatorMovimentacaoPontuacao(body: unknown): CriarMovimentacaoPontuacao {
+export function validatorMovimentacaoPontuacao(
+  body: unknown,
+): CriarMovimentacaoPontuacao {
   if (typeof body !== "object" || body === null) {
     throw new ValidationError("Dados da movimentação inválidos");
   }
@@ -22,7 +24,9 @@ export function validatorMovimentacaoPontuacao(body: unknown): CriarMovimentacao
 
   const tipo = (dados.tipo as string).toUpperCase();
   if (!["BONUS", "PENALIDADE", "PONTUACAO"].includes(tipo)) {
-    throw new ValidationError("Tipo desconhecido. Deve ser BONU S, PENALIDADE ou PONTUACAO");
+    throw new ValidationError(
+      "Tipo desconhecido. Deve ser BONU S, PENALIDADE ou PONTUACAO",
+    );
   }
 
   if (typeof dados.descricao !== "string" || dados.descricao.trim() === "") {

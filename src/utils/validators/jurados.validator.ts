@@ -2,7 +2,10 @@ import { CriarJurado, AtualizarJurado } from "../../types/jurado";
 import { ValidationError } from "../error";
 
 export function validatorJurado(body: unknown, tipo: "criar"): CriarJurado;
-export function validatorJurado(body: unknown, tipo: "atualizar"): AtualizarJurado;
+export function validatorJurado(
+  body: unknown,
+  tipo: "atualizar",
+): AtualizarJurado;
 
 export function validatorJurado(
   body: unknown,
@@ -33,7 +36,9 @@ export function validatorJurado(
 
   if (tipo === "atualizar") {
     if (typeof dados.ativo !== "boolean") {
-      throw new ValidationError("O campo (ATIVO) está com valor diferente do esperado!");
+      throw new ValidationError(
+        "O campo (ATIVO) está com valor diferente do esperado!",
+      );
     }
     return {
       ...jurado,

@@ -17,7 +17,10 @@ export class CriterioService {
     return this.repository.criar(dados);
   }
 
-  async alterar(id: number, dados: AtualizarCriterio): Promise<Criterio | null> {
+  async alterar(
+    id: number,
+    dados: AtualizarCriterio,
+  ): Promise<Criterio | null> {
     const criterio = await this.repository.alterar(id, dados);
     if (!criterio) throw new NotFoundError("Não há critério com este (ID)!");
     return criterio;

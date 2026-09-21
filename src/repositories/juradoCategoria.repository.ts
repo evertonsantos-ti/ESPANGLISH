@@ -1,5 +1,8 @@
 import { query, queryOne } from "../database/query";
-import { JuradoCategoria, CriarJuradoCategoria } from "../types/juradoCategoria";
+import {
+  JuradoCategoria,
+  CriarJuradoCategoria,
+} from "../types/juradoCategoria";
 
 interface Row {
   ID: number;
@@ -18,12 +21,21 @@ function mapRow(r: Row | null): JuradoCategoria | null {
 
 export class JuradoCategoriaRepository {
   async listar(): Promise<JuradoCategoria[]> {
-    const registros = await query<Row>(`SELECT ID, JURADO_ID, CATEGORIA_ID FROM JURADO_CATEGORIA ORDER BY ID`);
-    return registros.map((r) => ({ id: r.ID, idJurado: r.JURADO_ID, idCategoria: r.CATEGORIA_ID }));
+    const registros = await query<Row>(
+      `SELECT ID, JURADO_ID, CATEGORIA_ID FROM JURADO_CATEGORIA ORDER BY ID`,
+    );
+    return registros.map((r) => ({
+      id: r.ID,
+      idJurado: r.JURADO_ID,
+      idCategoria: r.CATEGORIA_ID,
+    }));
   }
 
   async buscarPorId(id: number): Promise<JuradoCategoria | null> {
-    const registro = await queryOne<Row>(`SELECT * FROM JURADO_CATEGORIA WHERE ID = ?`, [id]);
+    const registro = await queryOne<Row>(
+      `SELECT * FROM JURADO_CATEGORIA WHERE ID = ?`,
+      [id],
+    );
     return mapRow(registro);
   }
 
@@ -37,7 +49,10 @@ export class JuradoCategoriaRepository {
       [dados.idJurado, dados.idCategoria],
     );
 
-    if (!registro) throw new Error("Associação jurado-categoria não foi retornada após a criação");
+    if (!registro)
+      throw new Error(
+        "Associação jurado-categoria não foi retornada após a criação",
+      );
 
     return mapRow(registro) as JuradoCategoria;
   }

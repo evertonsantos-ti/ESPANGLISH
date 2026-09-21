@@ -55,8 +55,12 @@ import { JuradoCategoriaService } from "../services/juradoCategoria.service";
 import { JuradoCategoriaController } from "../controllers/juradoCategoria.controller";
 
 const juradoCategoriaRepository = new JuradoCategoriaRepository();
-const juradoCategoriaService = new JuradoCategoriaService(juradoCategoriaRepository);
-export const juradoCategoriaController = new JuradoCategoriaController(juradoCategoriaService);
+const juradoCategoriaService = new JuradoCategoriaService(
+  juradoCategoriaRepository,
+);
+export const juradoCategoriaController = new JuradoCategoriaController(
+  juradoCategoriaService,
+);
 
 // AVALIACOES -------------------------------------------------------------
 
@@ -85,5 +89,8 @@ import { MovimentacaoPontuacaoService } from "../services/movimentacaoPontuacao.
 import { MovimentacaoPontuacaoController } from "../controllers/movimentacaoPontuacao.controller";
 
 const movimentacaoPontuacaoRepository = new MovimentacaoPontuacaoRepository();
-const movimentacaoPontuacaoService = new MovimentacaoPontuacaoService(movimentacaoPontuacaoRepository);
-export const movimentacaoPontuacaoController = new MovimentacaoPontuacaoController(movimentacaoPontuacaoService);
+const movimentacaoPontuacaoService = new MovimentacaoPontuacaoService(
+  movimentacaoPontuacaoRepository,
+);
+export const movimentacaoPontuacaoController =
+  new MovimentacaoPontuacaoController(movimentacaoPontuacaoService);
