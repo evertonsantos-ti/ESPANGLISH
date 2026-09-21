@@ -33,6 +33,18 @@ router.put("/eventos/:id", (req, res) => {
 // Equipes ----------------------------------------------------------------------------
 // GET
 router.get("/equipes", (req, res) => {
-  return container.equipeController;
+  return container.equipeController.listar(req, res);
+});
+
+router.get("/equipes/:id", (req, res) => {
+  return container.equipeController.listar(req, res);
 });
 export default router;
+// POST
+router.post("/equipes", (req, res) => {
+  return container.equipeController.criar(req, res);
+});
+// PUT
+router.put("/equipes/:id", (req, res) => {
+  return container.equipeController.alterar(req, res);
+});
