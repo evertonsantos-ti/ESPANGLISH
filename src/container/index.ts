@@ -17,3 +17,73 @@ import { EquipeController } from "../controllers/equipe.controller";
 const equipeRepository = new EquipeRepository();
 const equipeService = new EquipeService(equipeRepository);
 export const equipeController = new EquipeController(equipeService);
+
+// CATEGORIAS -------------------------------------------------------------
+
+import { CategoriaRepository } from "../repositories/categoria.repository";
+import { CategoriaService } from "../services/categoria.service";
+import { CategoriaController } from "../controllers/categoria.controller";
+
+const categoriaRepository = new CategoriaRepository();
+const categoriaService = new CategoriaService(categoriaRepository);
+export const categoriaController = new CategoriaController(categoriaService);
+
+// CRITERIOS -------------------------------------------------------------
+
+import { CriterioRepository } from "../repositories/criterio.repository";
+import { CriterioService } from "../services/criterio.service";
+import { CriterioController } from "../controllers/criterio.controller";
+
+const criterioRepository = new CriterioRepository();
+const criterioService = new CriterioService(criterioRepository);
+export const criterioController = new CriterioController(criterioService);
+
+// JURADOS -------------------------------------------------------------
+
+import { JuradoRepository } from "../repositories/jurado.repository";
+import { JuradoService } from "../services/jurado.service";
+import { JuradoController } from "../controllers/jurado.controller";
+
+const juradoRepository = new JuradoRepository();
+const juradoService = new JuradoService(juradoRepository);
+export const juradoController = new JuradoController(juradoService);
+
+// JURADO_CATEGORIA -------------------------------------------------------------
+
+import { JuradoCategoriaRepository } from "../repositories/juradoCategoria.repository";
+import { JuradoCategoriaService } from "../services/juradoCategoria.service";
+import { JuradoCategoriaController } from "../controllers/juradoCategoria.controller";
+
+const juradoCategoriaRepository = new JuradoCategoriaRepository();
+const juradoCategoriaService = new JuradoCategoriaService(juradoCategoriaRepository);
+export const juradoCategoriaController = new JuradoCategoriaController(juradoCategoriaService);
+
+// AVALIACOES -------------------------------------------------------------
+
+import { AvaliacaoRepository } from "../repositories/avaliacao.repository";
+import { AvaliacaoService } from "../services/avaliacao.service";
+import { AvaliacaoController } from "../controllers/avaliacao.controller";
+
+const avaliacaoRepository = new AvaliacaoRepository();
+const avaliacaoService = new AvaliacaoService(avaliacaoRepository);
+export const avaliacaoController = new AvaliacaoController(avaliacaoService);
+
+// NOTAS -------------------------------------------------------------
+
+import { NotaRepository } from "../repositories/nota.repository";
+import { NotaService } from "../services/nota.service";
+import { NotaController } from "../controllers/nota.controller";
+
+const notaRepository = new NotaRepository();
+const notaService = new NotaService(notaRepository);
+export const notaController = new NotaController(notaService);
+
+// MOVIMENTACAO PONTUACAO -------------------------------------------------------------
+
+import { MovimentacaoPontuacaoRepository } from "../repositories/movimentacaoPontuacao.repository";
+import { MovimentacaoPontuacaoService } from "../services/movimentacaoPontuacao.service";
+import { MovimentacaoPontuacaoController } from "../controllers/movimentacaoPontuacao.controller";
+
+const movimentacaoPontuacaoRepository = new MovimentacaoPontuacaoRepository();
+const movimentacaoPontuacaoService = new MovimentacaoPontuacaoService(movimentacaoPontuacaoRepository);
+export const movimentacaoPontuacaoController = new MovimentacaoPontuacaoController(movimentacaoPontuacaoService);
