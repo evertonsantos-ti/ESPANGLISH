@@ -1,5 +1,5 @@
 import * as Firebird from "node-firebird";
-import { config } from "../config";
+import { config } from "../controllers/config";
 
 const options: Firebird.Options = {
   host: config.database.host,
