@@ -1,5 +1,5 @@
 import * as Firebird from "node-firebird";
-import { config } from "../controllers/config";
+import { config } from "../config";
 
 const options: Firebird.Options = {
   host: config.database.host,
@@ -20,7 +20,7 @@ export function testConnection(): Promise<void> {
         return;
       }
 
-      db.query("SELECT 1 FROM RDB$DATABASE", (queryError) => {
+      db.query("SELECT 1 FROM RDB$DATABASE", [], (queryError) => {
         db.detach();
 
         if (queryError) {
