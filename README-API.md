@@ -526,38 +526,64 @@ Exemplos de mensagens retornadas:
 
 ## Resumo de endpoints
 
+### Eventos
+
 - GET /api/health
 - GET /api/eventos
 - GET /api/eventos/:id
 - POST /api/eventos
 - PUT /api/eventos/:id
 - POST /api/eventos/inativar-eventos-vencidos
+
+### Equipes
+
 - GET /api/equipes
 - GET /api/equipes/:id
 - POST /api/equipes
 - PUT /api/equipes/:id
+
+### Categorias
+
 - GET /api/categorias
 - GET /api/categorias/:id
 - POST /api/categorias
 - PUT /api/categorias/:id
+
+### Critérios
+
 - GET /api/criterios
 - GET /api/criterios/:id
 - POST /api/criterios
 - PUT /api/criterios/:id
+
+### Jurados
+
 - GET /api/jurados
 - GET /api/jurados/:id
 - POST /api/jurados
 - PUT /api/jurados/:id
+
+### Jurados categorias
+
 - GET /api/jurado-categorias
 - GET /api/jurado-categorias/:id
 - POST /api/jurado-categorias
+
+### Avaliacões
+
 - GET /api/avaliacoes
 - GET /api/avaliacoes/:id
 - POST /api/avaliacoes
+
+### Notas
+
 - GET /api/notas
 - GET /api/notas/:id
 - POST /api/notas
 - PUT /api/notas/:id
+
+### Movimentações de pontuação
+
 - GET /api/movimentacoes-pontuacao
 - GET /api/movimentacoes-pontuacao/:id
 - POST /api/movimentacoes-pontuacao
