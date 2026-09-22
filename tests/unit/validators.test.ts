@@ -134,10 +134,11 @@ describe("Validadores dos módulos", () => {
   });
 
   it("deve validar jurado com payload typo e ativo em atualizar", () => {
-    expect(validatorJurado({ idEvento: 4, nome: "Jurado 1" }, "criar")).toEqual(
+    expect(validatorJurado({ idEvento: 4, nome: "Jurado 1", login: "jurado1" }, "criar")).toEqual(
       {
         idEvento: 4,
         nome: "Jurado 1",
+        login: "jurado1",
       },
     );
 
@@ -147,10 +148,10 @@ describe("Validadores dos módulos", () => {
 
     expect(
       validatorJurado(
-        { idEvento: 4, nome: "Jurado 1", ativo: true },
+        { idEvento: 4, nome: "Jurado 1", login: "jurado1", ativo: true },
         "atualizar",
       ),
-    ).toEqual({ idEvento: 4, nome: "Jurado 1", ativo: true });
+    ).toEqual({ idEvento: 4, nome: "Jurado 1", login: "jurado1", ativo: true });
   });
 
   it("deve validar associação jurado-categoria e rejeitar typo em campo de jurado", () => {

@@ -29,9 +29,18 @@ export function validatorJurado(
     throw new ValidationError("O nome do jurado está fora do padrão!");
   }
 
+  if (typeof dados.login !== "string") {
+    throw new ValidationError("Login do jurado inválido");
+  }
+
+  if (dados.login.trim() === "" || dados.login.length > 100) {
+    throw new ValidationError("O login do jurado está fora do padrão!");
+  }
+
   const jurado = {
     idEvento: dados.idEvento as number,
     nome: dados.nome,
+    login: dados.login as string,
   };
 
   if (tipo === "atualizar") {

@@ -1,0 +1,10 @@
+﻿Adicionar CRUD de Usuários e ajustar Jurados (campo login)
+
+- Adiciona módulo completo de Usuário: types, validators, repository, service e controller
+- Adiciona rotas: GET/POST/PUT/DELETE /api/usuarios
+- Atualiza JURADO para incluir o campo LOGIN (types, validator, repository, docs, testes)
+- Atualiza documentação README-API.md e testes E2E
+
+Todos os testes unitários/e2e foram executados localmente e passaram.
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>

@@ -99,6 +99,27 @@ router.put("/jurados/:id", (req, res) => {
   return container.juradoController.alterar(req, res);
 });
 
+// USUARIOS ----------------------------------------------------------------------------
+// GET
+router.get("/usuarios", (req, res) => {
+  return container.usuarioController.listar(req, res);
+});
+router.get("/usuarios/:id", (req, res) => {
+  return container.usuarioController.listar(req, res);
+});
+// POST
+router.post("/usuarios", (req, res) => {
+  return container.usuarioController.criar(req, res);
+});
+// PUT
+router.put("/usuarios/:id", (req, res) => {
+  return container.usuarioController.alterar(req, res);
+});
+// DELETE
+router.delete("/usuarios/:id", (req, res) => {
+  return container.usuarioController.deletar(req, res);
+});
+
 // JURADO_CATEGORIA ----------------------------------------------------------------------------
 // GET
 router.get("/jurado-categorias", (req, res) => {

@@ -5,6 +5,7 @@ import app from "../../src/app";
 import { CategoriaRepository } from "../../src/repositories/categoria.repository";
 import { EventoRepository } from "../../src/repositories/evento.repository";
 import { MovimentacaoPontuacaoRepository } from "../../src/repositories/movimentacaoPontuacao.repository";
+import { UsuarioRepository } from "../../src/repositories/usuario.repository";
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -95,5 +96,52 @@ describe("E2E das rotas da API", () => {
 
     expect(res.status).toBe(201);
     expect(res.body.tipo).toBe("PONTUACAO");
+  });
+
+  it("deve criar usuário pela rota /api/usuarios", async () => {
+    vi.spyOn(UsuarioRepository.prototype, "criar").mockResolvedValue({
+      id: 1,
+      dataCriacao: new Date("2025-01-01T00:00:00.000Z"),
+      nome: "Usuário Teste",
+      senhaHash: "hash-da-senha",
+    });
+
+    const res = await request(app).post("/api/usuarios").send({
+      nome: "Usuário Teste",
+      senhaHash: "hash-da-senha",
+    });
+
+    expect(res.status).toBe(201);
+    expect(res.body.nome).toBe("Usuário Teste");
+  });
+
+  it("deve deletar usuário pela rota /api/usuarios/:id retornando 204", async () => {
+    vi.spyOn(UsuarioRepository.prototype, "buscarPorId").mockResolvedValue({
+      id: 2,
+      dataCriacao: new Date("2025-01-01T00:00:00.000Z"),
+      nome: "Usuário X",
+      senhaHash: "hash",
+    });
+    vi.spyOn(UsuarioRepository.prototype, "deletar").mockResolvedValue(undefined);
+
+    const res = await request(app).delete("/api/usuarios/2");
+    expect(res.status).toBe(204);
+  });
+
+  it("deve atualizar usuário pela rota /api/usuarios/:id retornando 200", async () => {
+    vi.spyOn(UsuarioRepository.prototype, "alterar").mockResolvedValue({
+      id: 3,
+      dataCriacao: new Date("2025-01-01T00:00:00.000Z"),
+      nome: "Usuário Atualizado",
+      senhaHash: "novo-hash",
+    });
+
+    const res = await request(app).put("/api/usuarios/3").send({
+      nome: "Usuário Atualizado",
+      senhaHash: "novo-hash",
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.body.nome).toBe("Usuário Atualizado");
   });
 });
