@@ -1,5 +1,8 @@
 import { MovimentacaoPontuacaoRepository } from "../repositories/movimentacaoPontuacao.repository";
-import { MovimentacaoPontuacao, CriarMovimentacaoPontuacao } from "../types/movimentacaoPontuacao";
+import {
+  MovimentacaoPontuacao,
+  CriarMovimentacaoPontuacao,
+} from "../types/movimentacaoPontuacao";
 import { NotFoundError } from "../utils/error";
 
 export class MovimentacaoPontuacaoService {
@@ -13,7 +16,9 @@ export class MovimentacaoPontuacaoService {
     return this.repository.buscarPorId(id);
   }
 
-  async criar(dados: CriarMovimentacaoPontuacao): Promise<MovimentacaoPontuacao> {
+  async criar(
+    dados: CriarMovimentacaoPontuacao,
+  ): Promise<MovimentacaoPontuacao> {
     return this.repository.criar(dados);
   }
 }

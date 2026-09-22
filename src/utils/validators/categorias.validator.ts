@@ -1,7 +1,10 @@
 import { CriarCategoria, AtualizarCategoria } from "../../types/categoria";
 import { ValidationError } from "../error";
 
-export function validatorCategoria(body: unknown, tipo: "criar"): CriarCategoria;
+export function validatorCategoria(
+  body: unknown,
+  tipo: "criar",
+): CriarCategoria;
 export function validatorCategoria(
   body: unknown,
   tipo: "atualizar",
@@ -41,7 +44,9 @@ export function validatorCategoria(
 
   if (tipo === "atualizar") {
     if (typeof dados.ativo !== "boolean") {
-      throw new ValidationError("O campo (ATIVO) está com valor diferente do esperado!");
+      throw new ValidationError(
+        "O campo (ATIVO) está com valor diferente do esperado!",
+      );
     }
     return {
       ...categoria,

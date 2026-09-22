@@ -1,5 +1,9 @@
 import { query, queryOne } from "../database/query";
-import { Categoria, CriarCategoria, AtualizarCategoria } from "../types/categoria";
+import {
+  Categoria,
+  CriarCategoria,
+  AtualizarCategoria,
+} from "../types/categoria";
 
 interface CategoriaRow {
   ID: number;
@@ -52,7 +56,8 @@ export class CategoriaRepository {
       [dados.idEvento, dados.nome, dados.ordem],
     );
 
-    if (!registro) throw new Error("Categoria não foi retornada após a criação");
+    if (!registro)
+      throw new Error("Categoria não foi retornada após a criação");
 
     return {
       id: registro.ID,
@@ -63,7 +68,10 @@ export class CategoriaRepository {
     };
   }
 
-  async alterar(id: number, dados: AtualizarCategoria): Promise<Categoria | null> {
+  async alterar(
+    id: number,
+    dados: AtualizarCategoria,
+  ): Promise<Categoria | null> {
     const registro = await queryOne<CategoriaRow>(
       `
       UPDATE CATEGORIA

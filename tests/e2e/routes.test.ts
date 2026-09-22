@@ -1,10 +1,10 @@
 import request from "supertest";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import app from "../../../src/app";
-import { CategoriaRepository } from "../../../src/repositories/categoria.repository";
-import { EventoRepository } from "../../../src/repositories/evento.repository";
-import { MovimentacaoPontuacaoRepository } from "../../../src/repositories/movimentacaoPontuacao.repository";
+import app from "../../src/app";
+import { CategoriaRepository } from "../../src/repositories/categoria.repository";
+import { EventoRepository } from "../../src/repositories/evento.repository";
+import { MovimentacaoPontuacaoRepository } from "../../src/repositories/movimentacaoPontuacao.repository";
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -72,7 +72,10 @@ describe("E2E das rotas da API", () => {
   });
 
   it("deve criar movimentação quando o payload é válido", async () => {
-    vi.spyOn(MovimentacaoPontuacaoRepository.prototype, "criar").mockResolvedValue({
+    vi.spyOn(
+      MovimentacaoPontuacaoRepository.prototype,
+      "criar",
+    ).mockResolvedValue({
       id: 1,
       idEvento: 1,
       idEquipe: 1,

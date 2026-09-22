@@ -1,5 +1,8 @@
 import { JuradoCategoriaRepository } from "../repositories/juradoCategoria.repository";
-import { JuradoCategoria, CriarJuradoCategoria } from "../types/juradoCategoria";
+import {
+  JuradoCategoria,
+  CriarJuradoCategoria,
+} from "../types/juradoCategoria";
 import { NotFoundError } from "../utils/error";
 
 export class JuradoCategoriaService {

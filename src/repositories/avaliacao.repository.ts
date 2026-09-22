@@ -20,12 +20,22 @@ function map(r: Row | null): Avaliacao | null {
 
 export class AvaliacaoRepository {
   async listar(): Promise<Avaliacao[]> {
-    const registros = await query<Row>(`SELECT ID, EQUIPE_ID, CATEGORIA_ID, JURADO_ID FROM AVALIACAO ORDER BY ID`);
-    return registros.map((r) => ({ id: r.ID, idEquipe: r.EQUIPE_ID, idCategoria: r.CATEGORIA_ID, idJurado: r.JURADO_ID }));
+    const registros = await query<Row>(
+      `SELECT ID, EQUIPE_ID, CATEGORIA_ID, JURADO_ID FROM AVALIACAO ORDER BY ID`,
+    );
+    return registros.map((r) => ({
+      id: r.ID,
+      idEquipe: r.EQUIPE_ID,
+      idCategoria: r.CATEGORIA_ID,
+      idJurado: r.JURADO_ID,
+    }));
   }
 
   async buscarPorId(id: number): Promise<Avaliacao | null> {
-    const registro = await queryOne<Row>(`SELECT * FROM AVALIACAO WHERE ID = ?`, [id]);
+    const registro = await queryOne<Row>(
+      `SELECT * FROM AVALIACAO WHERE ID = ?`,
+      [id],
+    );
     return map(registro);
   }
 
@@ -39,7 +49,8 @@ export class AvaliacaoRepository {
       [dados.idEquipe, dados.idCategoria, dados.idJurado],
     );
 
-    if (!registro) throw new Error("Avaliação não foi retornada após a criação");
+    if (!registro)
+      throw new Error("Avaliação não foi retornada após a criação");
 
     return map(registro) as Avaliacao;
   }

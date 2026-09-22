@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { AvaliacaoController } from "../../../src/controllers/avaliacao.controller";
-import { CategoriaController } from "../../../src/controllers/categoria.controller";
-import { CriterioController } from "../../../src/controllers/criterio.controller";
-import { EquipeController } from "../../../src/controllers/equipe.controller";
-import { EventoController } from "../../../src/controllers/evento.controller";
-import { JuradoController } from "../../../src/controllers/jurado.controller";
-import { NotaController } from "../../../src/controllers/nota.controller";
-import { NotFoundError, ValidationError } from "../../../src/utils/error";
+import { AvaliacaoController } from "../../src/controllers/avaliacao.controller";
+import { CategoriaController } from "../../src/controllers/categoria.controller";
+import { CriterioController } from "../../src/controllers/criterio.controller";
+import { EquipeController } from "../../src/controllers/equipe.controller";
+import { EventoController } from "../../src/controllers/evento.controller";
+import { JuradoController } from "../../src/controllers/jurado.controller";
+import { NotaController } from "../../src/controllers/nota.controller";
+import { NotFoundError, ValidationError } from "../../src/utils/error";
 
 function mockResponse() {
   return {
@@ -33,7 +33,10 @@ describe("Controladores em nível funcional", () => {
   });
 
   it("deve lançar validation ao listar evento com id inválido", async () => {
-    const controller = new EventoController({ buscarPorId: vi.fn(), listar: vi.fn() } as any);
+    const controller = new EventoController({
+      buscarPorId: vi.fn(),
+      listar: vi.fn(),
+    } as any);
     const req = { params: { id: "abc" } } as any;
     const res = mockResponse();
 
@@ -41,23 +44,37 @@ describe("Controladores em nível funcional", () => {
   });
 
   it("deve criar equipe com dados válidos e responder 201", async () => {
-    const service = { criar: vi.fn().mockResolvedValue({ id: 1, idEvento: 1, nome: "Equipe A" }) };
+    const service = {
+      criar: vi
+        .fn()
+        .mockResolvedValue({ id: 1, idEvento: 1, nome: "Equipe A" }),
+    };
     const controller = new EquipeController(service as any);
     const req = { body: { idEvento: 1, nome: "Equipe A" } } as any;
     const res = mockResponse();
 
     await controller.criar(req, res);
 
-    expect(service.criar).toHaveBeenCalledWith({ idEvento: 1, nome: "Equipe A" });
+    expect(service.criar).toHaveBeenCalledWith({
+      idEvento: 1,
+      nome: "Equipe A",
+    });
     expect(res.status).toHaveBeenCalledWith(201);
   });
 
   it("deve lançar erro de not found ao atualizar categoria inexistente", async () => {
     const service = {
-      alterar: vi.fn().mockRejectedValue(new NotFoundError("Não há categoria com este (ID)!")),
+      alterar: vi
+        .fn()
+        .mockRejectedValue(
+          new NotFoundError("Não há categoria com este (ID)!"),
+        ),
     };
     const controller = new CategoriaController(service as any);
-    const req = { params: { id: "9" }, body: { idEvento: 1, nome: "Nova", ordem: 2, ativo: true } } as any;
+    const req = {
+      params: { id: "9" },
+      body: { idEvento: 1, nome: "Nova", ordem: 2, ativo: true },
+    } as any;
     const res = mockResponse();
 
     await expect(controller.alterar(req, res)).rejects.toThrow(NotFoundError);
@@ -66,7 +83,9 @@ describe("Controladores em nível funcional", () => {
   it("deve criar critério com erro ortográfico no payload e rejeitar antes do service", async () => {
     const service = { criar: vi.fn() };
     const controller = new CriterioController(service as any);
-    const req = { body: { idCategria: 1, nome: "Critério A", ordem: 2 } } as any;
+    const req = {
+      body: { idCategria: 1, nome: "Critério A", ordem: 2 },
+    } as any;
     const res = mockResponse();
 
     await expect(controller.criar(req, res)).rejects.toThrow(ValidationError);
@@ -75,7 +94,14 @@ describe("Controladores em nível funcional", () => {
 
   it("deve listar jurado por id e responder 200", async () => {
     const service = {
-      buscarPorId: vi.fn().mockResolvedValue({ id: 5, idEvento: 2, nome: "Jurado X", ativo: true }),
+      buscarPorId: vi
+        .fn()
+        .mockResolvedValue({
+          id: 5,
+          idEvento: 2,
+          nome: "Jurado X",
+          ativo: true,
+        }),
       listar: vi.fn(),
     };
     const controller = new JuradoController(service as any);
@@ -89,21 +115,32 @@ describe("Controladores em nível funcional", () => {
   });
 
   it("deve criar avaliação com dados válidos", async () => {
-    const service = { criar: vi.fn().mockResolvedValue({ id: 7, idEquipe: 1, idCategoria: 2, idJurado: 3 }) };
+    const service = {
+      criar: vi
+        .fn()
+        .mockResolvedValue({ id: 7, idEquipe: 1, idCategoria: 2, idJurado: 3 }),
+    };
     const controller = new AvaliacaoController(service as any);
     const req = { body: { idEquipe: 1, idCategoria: 2, idJurado: 3 } } as any;
     const res = mockResponse();
 
     await controller.criar(req, res);
 
-    expect(service.criar).toHaveBeenCalledWith({ idEquipe: 1, idCategoria: 2, idJurado: 3 });
+    expect(service.criar).toHaveBeenCalledWith({
+      idEquipe: 1,
+      idCategoria: 2,
+      idJurado: 3,
+    });
     expect(res.status).toHaveBeenCalledWith(201);
   });
 
   it("deve alterar nota e rejeitar quando id for texto inválido", async () => {
     const service = { alterar: vi.fn() };
     const controller = new NotaController(service as any);
-    const req = { params: { id: "texto" }, body: { idAvaliacao: 1, idCriterio: 2, nota: 90 } } as any;
+    const req = {
+      params: { id: "texto" },
+      body: { idAvaliacao: 1, idCriterio: 2, nota: 90 },
+    } as any;
     const res = mockResponse();
 
     await expect(controller.alterar(req, res)).rejects.toThrow(ValidationError);

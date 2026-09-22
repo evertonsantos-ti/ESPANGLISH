@@ -41,7 +41,9 @@ export function validatorCriterio(
 
   if (tipo === "atualizar") {
     if (typeof dados.ativo !== "boolean") {
-      throw new ValidationError("O campo (ATIVO) está com valor diferente do esperado!");
+      throw new ValidationError(
+        "O campo (ATIVO) está com valor diferente do esperado!",
+      );
     }
     return {
       ...criterio,

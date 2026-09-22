@@ -21,7 +21,9 @@ export function validatorNota(body: unknown): CriarNota {
   }
 
   if (dados.nota < 0 || dados.nota > 100) {
-    throw new ValidationError("Valor da nota fora do intervalo permitido (0-100)");
+    throw new ValidationError(
+      "Valor da nota fora do intervalo permitido (0-100)",
+    );
   }
 
   return {

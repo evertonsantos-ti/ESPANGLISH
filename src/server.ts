@@ -1,7 +1,7 @@
 import * as logger from "./utils/logger";
 import "dotenv/config";
 import app from "./app";
-import { config } from "./controllers/config";
+import { config } from "./config";
 import { testConnection } from "./database/connection";
 
 async function startServer() {
