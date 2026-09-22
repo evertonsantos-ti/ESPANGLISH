@@ -307,9 +307,12 @@ Body:
 ```json
 {
   "idEvento": 1,
-  "nome": "Jurado 1"
+  "nome": "Jurado 1",
+  "login": "jurado1"
 }
 ```
+
+Observação: conforme a migração database/migrations/004_login.sql a tabela JURADO possui o campo LOGIN (VARCHAR(100) NOT NULL e UNIQUE). O payload de criação deve fornecer o login do jurado.
 
 Resposta esperada (201):
 
@@ -318,6 +321,7 @@ Resposta esperada (201):
   "id": 1,
   "idEvento": 1,
   "nome": "Jurado 1",
+  "login": "jurado1",
   "ativo": true
 }
 ```
@@ -330,6 +334,7 @@ Body:
 {
   "idEvento": 1,
   "nome": "Jurado 1",
+  "login": "jurado1",
   "ativo": true
 }
 ```
@@ -587,3 +592,53 @@ Exemplos de mensagens retornadas:
 - GET /api/movimentacoes-pontuacao
 - GET /api/movimentacoes-pontuacao/:id
 - POST /api/movimentacoes-pontuacao
+
+## Usuários
+
+### GET /api/usuarios
+
+Lista usuários.
+
+### GET /api/usuarios/:id
+
+Busca usuário por id.
+
+### POST /api/usuarios
+
+Body:
+
+```json
+{
+  "nome": "Usuário Teste",
+  "senhaHash": "hash-da-senha"
+}
+```
+
+Resposta esperada (201):
+
+```json
+{
+  "id": 1,
+  "dataCriacao": "2025-01-01T00:00:00.000Z",
+  "nome": "Usuário Teste"
+}
+```
+
+### PUT /api/usuarios/:id
+
+Atualiza dados de um usuário.
+
+Body:
+
+```json
+{
+  "nome": "Usuário Atualizado",
+  "senhaHash": "novo-hash"
+}
+```
+
+Resposta esperada (200): objeto do usuário atualizado.
+
+### DELETE /api/usuarios/:id
+
+Remove um usuário pelo id. Resposta: 204 No Content se excluído com sucesso.

@@ -48,6 +48,15 @@ const juradoRepository = new JuradoRepository();
 const juradoService = new JuradoService(juradoRepository);
 export const juradoController = new JuradoController(juradoService);
 
+// USUARIOS -------------------------------------------------------------
+import { UsuarioRepository } from "../repositories/usuario.repository";
+import { UsuarioService } from "../services/usuario.service";
+import { UsuarioController } from "../controllers/usuario.controller";
+
+const usuarioRepository = new UsuarioRepository();
+const usuarioService = new UsuarioService(usuarioRepository);
+export const usuarioController = new UsuarioController(usuarioService);
+
 // JURADO_CATEGORIA -------------------------------------------------------------
 
 import { JuradoCategoriaRepository } from "../repositories/juradoCategoria.repository";

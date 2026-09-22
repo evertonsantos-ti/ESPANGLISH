@@ -5,13 +5,14 @@ interface JuradoRow {
   ID: number;
   EVENTO_ID: number;
   NOME: string;
+  LOGIN: string;
   ATIVO: boolean;
 }
 
 export class JuradoRepository {
   async listar(): Promise<Jurado[]> {
     const registros = await query<JuradoRow>(`
-      SELECT ID, EVENTO_ID, NOME, ATIVO
+      SELECT ID, EVENTO_ID, NOME, LOGIN, ATIVO
       FROM JURADO
       ORDER BY ID
     `);
@@ -20,6 +21,7 @@ export class JuradoRepository {
       id: r.ID,
       idEvento: r.EVENTO_ID,
       nome: r.NOME,
+      login: r.LOGIN,
       ativo: r.ATIVO,
     }));
   }
@@ -34,6 +36,7 @@ export class JuradoRepository {
       id: registro.ID,
       idEvento: registro.EVENTO_ID,
       nome: registro.NOME,
+      login: registro.LOGIN,
       ativo: registro.ATIVO,
     };
   }
@@ -41,11 +44,11 @@ export class JuradoRepository {
   async criar(dados: CriarJurado): Promise<Jurado> {
     const registro = await queryOne<JuradoRow>(
       `
-      INSERT INTO JURADO (EVENTO_ID, NOME, ATIVO)
-      VALUES (?, ?, TRUE)
-      RETURNING ID, EVENTO_ID, NOME, ATIVO
+      INSERT INTO JURADO (EVENTO_ID, NOME, LOGIN, ATIVO)
+      VALUES (?, ?, ?, TRUE)
+      RETURNING ID, EVENTO_ID, NOME, LOGIN, ATIVO
     `,
-      [dados.idEvento, dados.nome],
+      [dados.idEvento, dados.nome, dados.login],
     );
 
     if (!registro) throw new Error("Jurado não foi retornado após a criação");
@@ -54,6 +57,7 @@ export class JuradoRepository {
       id: registro.ID,
       idEvento: registro.EVENTO_ID,
       nome: registro.NOME,
+      login: registro.LOGIN,
       ativo: registro.ATIVO,
     };
   }
@@ -62,11 +66,11 @@ export class JuradoRepository {
     const registro = await queryOne<JuradoRow>(
       `
       UPDATE JURADO
-      SET EVENTO_ID = ?, NOME = ?, ATIVO = ?
+      SET EVENTO_ID = ?, NOME = ?, LOGIN = ?, ATIVO = ?
       WHERE ID = ?
       RETURNING *
     `,
-      [dados.idEvento, dados.nome, dados.ativo, id],
+      [dados.idEvento, dados.nome, dados.login, dados.ativo, id],
     );
 
     if (!registro) return null;
@@ -74,6 +78,7 @@ export class JuradoRepository {
       id: registro.ID,
       idEvento: registro.EVENTO_ID,
       nome: registro.NOME,
+      login: registro.LOGIN,
       ativo: registro.ATIVO,
     };
   }
