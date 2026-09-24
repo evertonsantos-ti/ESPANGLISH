@@ -1,7 +1,7 @@
 import { config } from "../config";
 import Jwt from "jsonwebtoken";
 
-type JwtPayload =
+export type JwtPayload =
   | {
       sub: number;
       tipo: "ADMIN";
