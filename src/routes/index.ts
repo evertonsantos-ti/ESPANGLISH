@@ -1,5 +1,6 @@
 ﻿import { Router } from "express";
 import * as container from "../container/index";
+import { AdminLoginInput } from "../auth/auth.types";
 
 const router = Router();
 
@@ -175,5 +176,8 @@ router.get("/movimentacoes-pontuacao/:id", (req, res) => {
 router.post("/movimentacoes-pontuacao", (req, res) => {
   return container.movimentacaoPontuacaoController.criar(req, res);
 });
-
+// LOGIN ----------------------------------------------------------------------------
+// POST
+router.post("/auth/admin/login", () => {});
+router.post("/auth/jurado/login", () => {});
 export default router;

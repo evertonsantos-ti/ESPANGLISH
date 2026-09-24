@@ -1,9 +1,8 @@
 ﻿import { query, queryOne } from "../database/query";
-import { Usuario, CriarUsuario } from "../types/usuario";
+import { Usuario, CriarUsuario, AtualizarUsuario } from "../types/usuario";
 
 interface UsuarioRow {
   ID: number;
-  DATA_CRIACAO: string;
   NOME: string;
   SENHA_HASH: string;
 }
@@ -11,27 +10,26 @@ interface UsuarioRow {
 export class UsuarioRepository {
   async listar(): Promise<Usuario[]> {
     const registros = await query<UsuarioRow>(`
-      SELECT ID, DATA_CRIACAO, NOME, SENHA_HASH
+      SELECT ID, NOME, SENHA_HASH
       FROM USUARIO
       ORDER BY ID
     `);
 
     return registros.map((r) => ({
       id: r.ID,
-      dataCriacao: new Date(r.DATA_CRIACAO),
       nome: r.NOME,
       senhaHash: r.SENHA_HASH,
     }));
   }
 
   async buscarPorId(id: number): Promise<Usuario | null> {
-    const registro = await queryOne<UsuarioRow>(`SELECT * FROM USUARIO WHERE ID = ?`, [
-      id,
-    ]);
+    const registro = await queryOne<UsuarioRow>(
+      `SELECT * FROM USUARIO WHERE ID = ?`,
+      [id],
+    );
     if (!registro) return null;
     return {
       id: registro.ID,
-      dataCriacao: new Date(registro.DATA_CRIACAO),
       nome: registro.NOME,
       senhaHash: registro.SENHA_HASH,
     };
@@ -40,9 +38,9 @@ export class UsuarioRepository {
   async criar(dados: CriarUsuario): Promise<Usuario> {
     const registro = await queryOne<UsuarioRow>(
       `
-      INSERT INTO USUARIO (DATA_CRIACAO, NOME, SENHA_HASH)
-      VALUES (CURRENT_TIMESTAMP, ?, ?)
-      RETURNING ID, DATA_CRIACAO, NOME, SENHA_HASH
+      INSERT INTO USUARIO (NOME, SENHA_HASH)
+      VALUES (?, ?)
+      RETURNING ID, NOME, SENHA_HASH
     `,
       [dados.nome, dados.senhaHash],
     );
@@ -51,7 +49,6 @@ export class UsuarioRepository {
 
     return {
       id: registro.ID,
-      dataCriacao: new Date(registro.DATA_CRIACAO),
       nome: registro.NOME,
       senhaHash: registro.SENHA_HASH,
     };
@@ -63,7 +60,7 @@ export class UsuarioRepository {
       UPDATE USUARIO
       SET NOME = ?, SENHA_HASH = ?
       WHERE ID = ?
-      RETURNING ID, DATA_CRIACAO, NOME, SENHA_HASH
+      RETURNING ID, NOME, SENHA_HASH
     `,
       [dados.nome, dados.senhaHash, id],
     );
@@ -71,7 +68,6 @@ export class UsuarioRepository {
     if (!registro) return null;
     return {
       id: registro.ID,
-      dataCriacao: new Date(registro.DATA_CRIACAO),
       nome: registro.NOME,
       senhaHash: registro.SENHA_HASH,
     };
@@ -79,5 +75,23 @@ export class UsuarioRepository {
 
   async deletar(id: number): Promise<void> {
     await query(`DELETE FROM USUARIO WHERE ID = ?`, [id]);
+  }
+
+  async buscarPorNome(nome: string): Promise<Usuario | null> {
+    const registro = await queryOne<UsuarioRow>(
+      `
+          SELECT ID, NOME, SENHA_HASH
+          FROM USUARIO
+          WHERE NOME = ?
+          `,
+      [nome],
+    );
+
+    if (!registro) return null;
+    return {
+      id: registro.ID,
+      nome: registro.NOME,
+      senhaHash: registro.SENHA_HASH,
+    };
   }
 }

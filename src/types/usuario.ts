@@ -7,5 +7,4 @@ export interface AtualizarUsuario extends CriarUsuario {}
 
 export interface Usuario extends AtualizarUsuario {
   id: number;
-  dataCriacao: Date;
 }

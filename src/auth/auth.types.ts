@@ -8,3 +8,8 @@ export type AuthUser =
       tipo: "JURADO";
       eventoId: number;
     };
+
+export type AdminLoginInput = {
+  nome: string;
+  senha: string;
+};

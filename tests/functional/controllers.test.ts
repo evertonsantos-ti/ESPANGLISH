@@ -7,6 +7,8 @@ import { EquipeController } from "../../src/controllers/equipe.controller";
 import { EventoController } from "../../src/controllers/evento.controller";
 import { JuradoController } from "../../src/controllers/jurado.controller";
 import { NotaController } from "../../src/controllers/nota.controller";
+import * as queryModule from "../../src/database/query";
+import { UsuarioRepository } from "../../src/repositories/usuario.repository";
 import { NotFoundError, ValidationError } from "../../src/utils/error";
 
 function mockResponse() {
@@ -145,5 +147,39 @@ describe("Controladores em nível funcional", () => {
 
     await expect(controller.alterar(req, res)).rejects.toThrow(ValidationError);
     expect(service.alterar).not.toHaveBeenCalled();
+  });
+
+  it("deve buscar usuário por nome e retornar o usuário quando encontrado", async () => {
+    const querySpy = vi.spyOn(queryModule, "queryOne").mockResolvedValue({
+      ID: 7,
+      NOME: "admin",
+      SENHA_HASH: "hash-seguro",
+    });
+
+    const repository = new UsuarioRepository();
+    const usuario = await repository.buscarPorNome("admin");
+
+    expect(querySpy).toHaveBeenCalledWith(
+      expect.stringContaining("WHERE NOME = ?"),
+      ["admin"],
+    );
+    expect(usuario).toEqual({
+      id: 7,
+      nome: "admin",
+      senhaHash: "hash-seguro",
+    });
+  });
+
+  it("deve retornar null quando não encontrar usuário por nome", async () => {
+    vi.spyOn(queryModule, "queryOne").mockResolvedValueOnce(null);
+
+    const repository = new UsuarioRepository();
+    const usuario = await repository.buscarPorNome("inexistente");
+
+    expect(queryModule.queryOne).toHaveBeenCalledWith(
+      expect.stringContaining("WHERE NOME = ?"),
+      ["inexistente"],
+    );
+    expect(usuario).toBeNull();
   });
 });

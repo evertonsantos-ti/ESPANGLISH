@@ -1,5 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { ValidationError, NotFoundError } from "../utils/error";
+import {
+  ValidationError,
+  NotFoundError,
+  UnauthorizedError,
+} from "../utils/error";
 import * as logger from "../utils/logger";
 
 export function errorMiddleware(
@@ -14,6 +18,10 @@ export function errorMiddleware(
 
   if (error instanceof NotFoundError) {
     return res.status(404).json({ error: error.message });
+  }
+
+  if (error instanceof UnauthorizedError) {
+    return res.status(401).json({ error: error.message });
   }
 
   logger.error(`${error}`);

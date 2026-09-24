@@ -14,12 +14,14 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "node-firebird": "^2.16.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/supertest": "^6.0.0",
@@ -27,5 +29,9 @@
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "vitest": "^3.2.4"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true,
+    "esbuild@0.28.2": true
   }
 }
