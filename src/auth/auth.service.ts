@@ -1,5 +1,6 @@
-import { AdminLoginInput } from "./auth.types";
+import { AdminLoginInput, JuradoLoginInput } from "./auth.types";
 import { UsuarioRepository } from "../repositories/usuario.repository";
+import { JuradoRepository } from "../repositories/jurado.repository";
 import { UnauthorizedError } from "../utils/error";
 import { PasswordService } from "./password.service";
 import { JwtService } from "./jwt.service";
@@ -7,6 +8,7 @@ import { JwtService } from "./jwt.service";
 export class AuthService {
   constructor(
     private usuarioRepository: UsuarioRepository,
+    private juradoRepository: JuradoRepository,
     private passwordService: PasswordService,
     private jwtService: JwtService,
   ) {}
@@ -23,11 +25,33 @@ export class AuthService {
       throw new UnauthorizedError("Credenciais inválidas.");
     }
 
-    const tokenGenerated = this.jwtService.generate({
+    const token = this.jwtService.generate({
       sub: registro.id,
       tipo: "ADMIN",
     });
 
-    return { token: tokenGenerated };
+    return { token };
+  }
+
+  async loginJurado(input: JuradoLoginInput): Promise<{ token: string }> {
+    const registro = await this.juradoRepository.buscarParaLogin(
+      input.login,
+      input.eventoId,
+    );
+
+    if (registro === null) {
+      throw new UnauthorizedError("Credenciais inválidas.");
+    }
+    if (!(input.senha === String(registro.id))) {
+      throw new UnauthorizedError("Credenciais inválidas.");
+    }
+
+    const token = this.jwtService.generate({
+      sub: registro.id,
+      tipo: "JURADO",
+      eventoId: registro.idEvento,
+    });
+
+    return { token };
   }
 }

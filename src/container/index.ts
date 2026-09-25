@@ -115,6 +115,7 @@ const passwordService = new PasswordService();
 const jwtService = new JwtService();
 const authService = new AuthService(
   usuarioRepository, // Essa classe já foi declarada no espaço de usuários a partir da linha 51
+  juradoRepository, // Essa classe já foi declarada no espaço de jurados a partir da linha 41
   passwordService,
   jwtService,
 );

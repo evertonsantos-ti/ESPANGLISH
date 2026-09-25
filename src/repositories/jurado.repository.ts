@@ -82,4 +82,29 @@ export class JuradoRepository {
       ativo: registro.ATIVO,
     };
   }
+
+  async buscarParaLogin(
+    login: string,
+    eventoId: number,
+  ): Promise<Jurado | null> {
+    const registro = await queryOne<JuradoRow>(
+      `
+      SELECT ID, EVENTO_ID, NOME, LOGIN, ATIVO
+      FROM JURADO
+      WHERE LOGIN = ?
+        AND EVENTO_ID = ?
+        AND ATIVO = TRUE
+      `,
+      [login, eventoId],
+    );
+
+    if (!registro) return null;
+    return {
+      id: registro.ID,
+      idEvento: registro.EVENTO_ID,
+      nome: registro.NOME,
+      login: registro.LOGIN,
+      ativo: registro.ATIVO,
+    };
+  }
 }

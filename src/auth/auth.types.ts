@@ -13,3 +13,9 @@ export type AdminLoginInput = {
   nome: string;
   senha: string;
 };
+
+export type JuradoLoginInput = {
+  eventoId: number;
+  login: string;
+  senha: string;
+};

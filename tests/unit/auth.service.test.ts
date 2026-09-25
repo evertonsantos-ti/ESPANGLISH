@@ -12,6 +12,7 @@ describe("AuthService.loginAdmin", () => {
         senhaHash: "hash-valido",
       }),
     };
+    const juradoRepository = { buscarParaLogin: vi.fn() };
 
     const passwordService = {
       compare: vi.fn().mockResolvedValue(true),
@@ -23,6 +24,7 @@ describe("AuthService.loginAdmin", () => {
 
     const service = new AuthService(
       usuarioRepository as any,
+      juradoRepository as any,
       passwordService as any,
       jwtService as any,
     );
@@ -42,6 +44,7 @@ describe("AuthService.loginAdmin", () => {
     const usuarioRepository = {
       buscarPorNome: vi.fn().mockResolvedValue(null),
     };
+    const juradoRepository = { buscarParaLogin: vi.fn() };
 
     const passwordService = {
       compare: vi.fn(),
@@ -53,6 +56,7 @@ describe("AuthService.loginAdmin", () => {
 
     const service = new AuthService(
       usuarioRepository as any,
+      juradoRepository as any,
       passwordService as any,
       jwtService as any,
     );
@@ -76,6 +80,7 @@ describe("AuthService.loginAdmin", () => {
         senhaHash: "hash-valido",
       }),
     };
+    const juradoRepository = { buscarParaLogin: vi.fn() };
 
     const passwordService = {
       compare: vi.fn().mockResolvedValue(false),
@@ -87,6 +92,7 @@ describe("AuthService.loginAdmin", () => {
 
     const service = new AuthService(
       usuarioRepository as any,
+      juradoRepository as any,
       passwordService as any,
       jwtService as any,
     );
@@ -99,6 +105,74 @@ describe("AuthService.loginAdmin", () => {
     );
 
     expect(passwordService.compare).toHaveBeenCalledWith("senha-errada", "hash-valido");
+    expect(jwtService.generate).not.toHaveBeenCalled();
+  });
+});
+
+describe("AuthService.loginJurado", () => {
+  it("deve autenticar um jurado com sucesso e gerar token", async () => {
+    const usuarioRepository = { buscarPorNome: vi.fn() };
+    const juradoRepository = {
+      buscarParaLogin: vi.fn().mockResolvedValue({
+        id: 42,
+        idEvento: 7,
+        nome: "Jurado A",
+        login: "jurado-a",
+        ativo: true,
+      }),
+    };
+    const passwordService = { compare: vi.fn() };
+    const jwtService = {
+      generate: vi.fn().mockReturnValue("token-jurado"),
+    };
+
+    const service = new AuthService(
+      usuarioRepository as any,
+      juradoRepository as any,
+      passwordService as any,
+      jwtService as any,
+    );
+
+    const result = await service.loginJurado({
+      login: "jurado-a",
+      senha: "42",
+      eventoId: 7,
+    });
+
+    expect(juradoRepository.buscarParaLogin).toHaveBeenCalledWith("jurado-a", 7);
+    expect(jwtService.generate).toHaveBeenCalledWith({
+      sub: 42,
+      tipo: "JURADO",
+      eventoId: 7,
+    });
+    expect(result).toEqual({ token: "token-jurado" });
+  });
+
+  it("deve rejeitar login de jurado quando a senha não bate com o id", async () => {
+    const usuarioRepository = { buscarPorNome: vi.fn() };
+    const juradoRepository = {
+      buscarParaLogin: vi.fn().mockResolvedValue({
+        id: 42,
+        idEvento: 7,
+        nome: "Jurado A",
+        login: "jurado-a",
+        ativo: true,
+      }),
+    };
+    const passwordService = { compare: vi.fn() };
+    const jwtService = { generate: vi.fn() };
+
+    const service = new AuthService(
+      usuarioRepository as any,
+      juradoRepository as any,
+      passwordService as any,
+      jwtService as any,
+    );
+
+    await expect(
+      service.loginJurado({ login: "jurado-a", senha: "999", eventoId: 7 }),
+    ).rejects.toThrow(UnauthorizedError);
+
     expect(jwtService.generate).not.toHaveBeenCalled();
   });
 });

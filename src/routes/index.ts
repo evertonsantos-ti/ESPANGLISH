@@ -176,8 +176,4 @@ router.get("/movimentacoes-pontuacao/:id", (req, res) => {
 router.post("/movimentacoes-pontuacao", (req, res) => {
   return container.movimentacaoPontuacaoController.criar(req, res);
 });
-// LOGIN ----------------------------------------------------------------------------
-// POST
-router.post("/auth/admin/login", () => {});
-router.post("/auth/jurado/login", () => {});
 export default router;

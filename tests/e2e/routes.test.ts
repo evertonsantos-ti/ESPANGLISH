@@ -113,15 +113,38 @@ describe("E2E das rotas da API", () => {
     expect(res.body.token).toBe("jwt-admin-token");
   });
 
+  it("deve autenticar jurado pela rota /auth/jurado/login", async () => {
+    vi.spyOn(AuthService.prototype, "loginJurado").mockResolvedValue({
+      token: "jwt-jurado-token",
+    });
+
+    const res = await request(app).post("/auth/jurado/login").send({
+      login: "jurado-a",
+      senha: "42",
+      eventoId: 7,
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.body.token).toBe("jwt-jurado-token");
+  });
+
   it("deve rejeitar login admin com payload inválido na rota /auth/admin/login", async () => {
     const res = await request(app).post("/auth/admin/login").send({
       nome: "admin",
     });
 
     expect(res.status).toBe(400);
-    expect(res.body.error).toBe(
-      "Os dados enviando não conrrespondem aos tipos de dados esperados",
-    );
+    expect(res.body.error).toBe("Os dados enviados não correspondem aos tipos esperados");
+  });
+
+  it("deve rejeitar login jurado com payload inválido na rota /auth/jurado/login", async () => {
+    const res = await request(app).post("/auth/jurado/login").send({
+      login: "jurado-a",
+      senha: "42",
+    });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Os dados enviados não correspondem aos tipos esperados");
   });
 
   it("deve criar usuário pela rota /api/usuarios", async () => {

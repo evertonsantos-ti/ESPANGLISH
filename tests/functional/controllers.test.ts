@@ -170,6 +170,27 @@ describe("Controladores em nível funcional", () => {
     expect(res.json).toHaveBeenCalledWith({ token: "token-admin" });
   });
 
+  it("deve autenticar jurado pelo controller e responder 200", async () => {
+    const service = {
+      loginJurado: vi.fn().mockResolvedValue({ token: "token-jurado" }),
+    };
+    const controller = new AuthController(service as any);
+    const req = {
+      body: { login: "jurado-a", senha: "42", eventoId: 7 },
+    } as any;
+    const res = mockResponse();
+
+    await controller.loginJurado(req, res);
+
+    expect(service.loginJurado).toHaveBeenCalledWith({
+      login: "jurado-a",
+      senha: "42",
+      eventoId: 7,
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ token: "token-jurado" });
+  });
+
   it("deve rejeitar login admin com payload inválido antes do service", async () => {
     const service = { loginAdmin: vi.fn() };
     const controller = new AuthController(service as any);
@@ -178,6 +199,16 @@ describe("Controladores em nível funcional", () => {
 
     await expect(controller.loginAdmin(req, res)).rejects.toThrow(ValidationError);
     expect(service.loginAdmin).not.toHaveBeenCalled();
+  });
+
+  it("deve rejeitar login jurado com payload inválido antes do service", async () => {
+    const service = { loginJurado: vi.fn() };
+    const controller = new AuthController(service as any);
+    const req = { body: { login: "jurado-a", senha: "42" } } as any;
+    const res = mockResponse();
+
+    await expect(controller.loginJurado(req, res)).rejects.toThrow(ValidationError);
+    expect(service.loginJurado).not.toHaveBeenCalled();
   });
 
   it("deve buscar usuário por nome e retornar o usuário quando encontrado", async () => {
