@@ -50,7 +50,7 @@ describe("E2E das rotas da API", () => {
 
     const res = await request(app)
       .post("/api/categorias")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", "Bearer " + token)
       .send({
         idEvento: 1,
         nome: "Categoria A",
@@ -67,7 +67,7 @@ describe("E2E das rotas da API", () => {
 
     const res = await request(app)
       .post("/api/equipes")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", "Bearer " + token)
       .send({
         idEvent: 1,
         nomee: "Equipe A",
@@ -83,7 +83,7 @@ describe("E2E das rotas da API", () => {
 
     const res = await request(app)
       .post("/api/movimentacoes-pontuacao")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", "Bearer " + token)
       .send({
         idEvento: 1,
         idEquipe: 1,
@@ -115,7 +115,7 @@ describe("E2E das rotas da API", () => {
 
     const res = await request(app)
       .post("/api/movimentacoes-pontuacao")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", "Bearer " + token)
       .send({
         idEvento: 1,
         idEquipe: 1,
@@ -189,7 +189,7 @@ describe("E2E das rotas da API", () => {
 
     const res = await request(app)
       .post("/api/usuarios")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", "Bearer " + token)
       .send({
         nome: "Usuário Teste",
         senhaHash: "hash-da-senha",
@@ -213,7 +213,7 @@ describe("E2E das rotas da API", () => {
 
     const res = await request(app)
       .delete("/api/usuarios/2")
-      .set("Authorization", `Bearer ${token}`);
+      .set("Authorization", "Bearer " + token);
     expect(res.status).toBe(204);
   });
 
@@ -230,7 +230,7 @@ describe("E2E das rotas da API", () => {
 
     const res = await request(app)
       .put("/api/usuarios/3")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", "Bearer " + token)
       .send({
         nome: "Usuário Atualizado",
         senhaHash: "novo-hash",
@@ -252,7 +252,7 @@ describe("E2E das rotas da API", () => {
       { id: 1, idEvento: 1, nome: "Jurado A", login: "j1", ativo: true },
     ]);
 
-    const resAuth = await request(app).get("/api/jurados").set("Authorization", `Bearer ${adminToken}`);
+    const resAuth = await request(app).get("/api/jurados").set("Authorization", "Bearer " + adminToken);
     expect(resAuth.status).toBe(200);
     expect(resAuth.body[0].nome).toBe("Jurado A");
   });
@@ -265,7 +265,7 @@ describe("E2E das rotas da API", () => {
       { id: 1, nome: "Usuário A", senhaHash: "h" },
     ]);
 
-    const resAuth = await request(app).get("/api/usuarios").set("Authorization", `Bearer ${adminToken}`);
+    const resAuth = await request(app).get("/api/usuarios").set("Authorization", "Bearer " + adminToken);
     expect(resAuth.status).toBe(200);
     expect(resAuth.body[0].nome).toBe("Usuário A");
   });
@@ -278,7 +278,7 @@ describe("E2E das rotas da API", () => {
       { id: 1, idJurado: 1, idCategoria: 2 },
     ]);
 
-    const resAuth = await request(app).get("/api/jurado-categorias").set("Authorization", `Bearer ${adminToken}`);
+    const resAuth = await request(app).get("/api/jurado-categorias").set("Authorization", "Bearer " + adminToken);
     expect(resAuth.status).toBe(200);
     expect(resAuth.body[0].idJurado).toBe(1);
   });
@@ -291,7 +291,7 @@ describe("E2E das rotas da API", () => {
       { id: 1, idEquipe: 1, idCategoria: 2, idJurado: 3 },
     ]);
 
-    const resAuth = await request(app).get("/api/avaliacoes").set("Authorization", `Bearer ${adminToken}`);
+    const resAuth = await request(app).get("/api/avaliacoes").set("Authorization", "Bearer " + adminToken);
     expect(resAuth.status).toBe(200);
     expect(resAuth.body[0].idEquipe).toBe(1);
   });
@@ -304,7 +304,7 @@ describe("E2E das rotas da API", () => {
       { id: 1, idAvaliacao: 1, idCriterio: 2, nota: 100 },
     ]);
 
-    const resAuth = await request(app).get("/api/notas").set("Authorization", `Bearer ${adminToken}`);
+    const resAuth = await request(app).get("/api/notas").set("Authorization", "Bearer " + adminToken);
     expect(resAuth.status).toBe(200);
     expect(resAuth.body[0].nota).toBe(100);
   });
@@ -317,7 +317,7 @@ describe("E2E das rotas da API", () => {
       { id: 1, idEvento: 1, idEquipe: 1, tipo: "PONTUACAO", descricao: "d", pontos: 10 },
     ]);
 
-    const resAuth = await request(app).get("/api/movimentacoes-pontuacao").set("Authorization", `Bearer ${adminToken}`);
+    const resAuth = await request(app).get("/api/movimentacoes-pontuacao").set("Authorization", "Bearer " + adminToken);
     expect(resAuth.status).toBe(200);
     expect(resAuth.body[0].tipo).toBe("PONTUACAO");
   });

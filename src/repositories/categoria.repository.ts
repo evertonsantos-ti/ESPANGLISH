@@ -46,6 +46,58 @@ export class CategoriaRepository {
     };
   }
 
+  async buscarPorJurado(
+    idJurado: number,
+    eventoId: number,
+  ): Promise<Categoria[]> {
+    const registros = await query<CategoriaRow>(
+      `
+        SELECT C.*
+        FROM CATEGORIA C
+        INNER JOIN JURADO_CATEGORIA JC
+          ON JC.CATEGORIA_ID = C.ID
+        WHERE JC.JURADO_ID = ?
+        AND C.EVENTO_ID = ?
+      `,
+      [idJurado, eventoId],
+    );
+
+    return registros.map((r) => ({
+      id: r.ID,
+      idEvento: r.EVENTO_ID,
+      nome: r.NOME,
+      ordem: r.ORDEM,
+      ativo: r.ATIVO,
+    }));
+  }
+  async buscarPorIdJurado(
+    idCategoria: number,
+    idJurado: number,
+    eventoId: number,
+  ): Promise<Categoria | null> {
+    const registro = await queryOne<CategoriaRow>(
+      `
+        SELECT C.*
+        FROM CATEGORIA C
+        INNER JOIN JURADO_CATEGORIA JC
+          ON JC.CATEGORIA_ID = C.ID
+        WHERE C.ID = ?
+          AND JC.JURADO_ID = ?
+          AND C.EVENTO_ID = ?
+      `,
+      [idCategoria, idJurado, eventoId],
+    );
+
+    if (!registro) return null;
+    return {
+      id: registro.ID,
+      idEvento: registro.EVENTO_ID,
+      nome: registro.NOME,
+      ordem: registro.ORDEM,
+      ativo: registro.ATIVO,
+    };
+  }
+
   async criar(dados: CriarCategoria): Promise<Categoria> {
     const registro = await queryOne<CategoriaRow>(
       `

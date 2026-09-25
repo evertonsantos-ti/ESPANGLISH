@@ -8,11 +8,28 @@ export class CategoriaController {
 
   async listar(req: Request, res: Response) {
     let categorias;
-    if (req.params.id) {
-      if (Number.isNaN(Number(req.params.id))) {
+
+    const id = req.params.id;
+
+    if (id) {
+      if (Number.isNaN(Number(id))) {
         throw new ValidationError("O parâmetro informado deve ser um número");
       }
-      categorias = await this.service.buscarPorId(Number(req.params.id));
+
+      if (req.user?.tipo === "JURADO") {
+        categorias = await this.service.buscaPorIdJurado(
+          Number(id),
+          req.user.id,
+          req.user.eventoId,
+        );
+      } else {
+        categorias = await this.service.buscarPorId(Number(id));
+      }
+    } else if (req.user?.tipo === "JURADO") {
+      categorias = await this.service.buscarPorJurado(
+        req.user.id,
+        req.user.eventoId,
+      );
     } else {
       categorias = await this.service.listar();
     }

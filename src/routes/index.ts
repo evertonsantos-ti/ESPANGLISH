@@ -57,9 +57,14 @@ router.put("/equipes/:id", authenticate, authorize("ADMIN"), (req, res) => {
 
 // CATEGORIAS ----------------------------------------------------------------------------
 // GET
-router.get("/categorias", (req, res) => {
-  return container.categoriaController.listar(req, res);
-});
+router.get(
+  "/categorias",
+  authenticate,
+  authorize("ADMIN", "JURADO"),
+  (req, res) => {
+    return container.categoriaController.listar(req, res);
+  },
+);
 router.get("/categorias/:id", (req, res) => {
   return container.categoriaController.listar(req, res);
 });

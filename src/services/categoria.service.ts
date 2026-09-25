@@ -17,6 +17,21 @@ export class CategoriaService {
     return this.repository.buscarPorId(id);
   }
 
+  async buscarPorJurado(
+    idJurado: number,
+    eventoId: number,
+  ): Promise<Categoria[]> {
+    return this.repository.buscarPorJurado(idJurado, eventoId);
+  }
+
+  async buscaPorIdJurado(
+    idCategoria: number,
+    idJurado: number,
+    eventoId: number,
+  ): Promise<Categoria | null> {
+    return this.repository.buscarPorIdJurado(idCategoria, idJurado, eventoId);
+  }
+
   async criar(dados: CriarCategoria): Promise<Categoria> {
     return this.repository.criar(dados);
   }
