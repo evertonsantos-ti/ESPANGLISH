@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { AuthController } from "../../src/controllers/auth.controller";
 import { AvaliacaoController } from "../../src/controllers/avaliacao.controller";
 import { CategoriaController } from "../../src/controllers/categoria.controller";
 import { CriterioController } from "../../src/controllers/criterio.controller";
@@ -147,6 +148,36 @@ describe("Controladores em nível funcional", () => {
 
     await expect(controller.alterar(req, res)).rejects.toThrow(ValidationError);
     expect(service.alterar).not.toHaveBeenCalled();
+  });
+
+  it("deve autenticar admin pelo controller e responder 200", async () => {
+    const service = {
+      loginAdmin: vi.fn().mockResolvedValue({ token: "token-admin" }),
+    };
+    const controller = new AuthController(service as any);
+    const req = {
+      body: { nome: "admin", senha: "senha123" },
+    } as any;
+    const res = mockResponse();
+
+    await controller.loginAdmin(req, res);
+
+    expect(service.loginAdmin).toHaveBeenCalledWith({
+      nome: "admin",
+      senha: "senha123",
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ token: "token-admin" });
+  });
+
+  it("deve rejeitar login admin com payload inválido antes do service", async () => {
+    const service = { loginAdmin: vi.fn() };
+    const controller = new AuthController(service as any);
+    const req = { body: { nome: "admin" } } as any;
+    const res = mockResponse();
+
+    await expect(controller.loginAdmin(req, res)).rejects.toThrow(ValidationError);
+    expect(service.loginAdmin).not.toHaveBeenCalled();
   });
 
   it("deve buscar usuário por nome e retornar o usuário quando encontrado", async () => {

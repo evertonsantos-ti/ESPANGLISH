@@ -103,3 +103,20 @@ const movimentacaoPontuacaoService = new MovimentacaoPontuacaoService(
 );
 export const movimentacaoPontuacaoController =
   new MovimentacaoPontuacaoController(movimentacaoPontuacaoService);
+
+// LOGIN -------------------------------------------------------------
+
+import { AuthController } from "../controllers/auth.controller";
+import { AuthService } from "../auth/auth.service";
+import { PasswordService } from "../auth/password.service";
+import { JwtService } from "../auth/jwt.service";
+
+const passwordService = new PasswordService();
+const jwtService = new JwtService();
+const authService = new AuthService(
+  usuarioRepository, // Essa classe já foi declarada no espaço de usuários a partir da linha 51
+  passwordService,
+  jwtService,
+);
+
+export const authController = new AuthController(authService);

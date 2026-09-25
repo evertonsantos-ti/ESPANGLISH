@@ -2,6 +2,7 @@ import request from "supertest";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import app from "../../src/app";
+import { AuthService } from "../../src/auth/auth.service";
 import { CategoriaRepository } from "../../src/repositories/categoria.repository";
 import { EventoRepository } from "../../src/repositories/evento.repository";
 import { MovimentacaoPontuacaoRepository } from "../../src/repositories/movimentacaoPontuacao.repository";
@@ -96,6 +97,31 @@ describe("E2E das rotas da API", () => {
 
     expect(res.status).toBe(201);
     expect(res.body.tipo).toBe("PONTUACAO");
+  });
+
+  it("deve autenticar admin pela rota /auth/admin/login", async () => {
+    vi.spyOn(AuthService.prototype, "loginAdmin").mockResolvedValue({
+      token: "jwt-admin-token",
+    });
+
+    const res = await request(app).post("/auth/admin/login").send({
+      nome: "admin",
+      senha: "senha123",
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.body.token).toBe("jwt-admin-token");
+  });
+
+  it("deve rejeitar login admin com payload inválido na rota /auth/admin/login", async () => {
+    const res = await request(app).post("/auth/admin/login").send({
+      nome: "admin",
+    });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe(
+      "Os dados enviando não conrrespondem aos tipos de dados esperados",
+    );
   });
 
   it("deve criar usuário pela rota /api/usuarios", async () => {
