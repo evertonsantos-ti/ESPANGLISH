@@ -79,12 +79,22 @@ router.put("/categorias/:id", authenticate, authorize("ADMIN"), (req, res) => {
 
 // CRITERIOS ----------------------------------------------------------------------------
 // GET
-router.get("/criterios", (req, res) => {
-  return container.criterioController.listar(req, res);
-});
-router.get("/criterios/:id", (req, res) => {
-  return container.criterioController.listar(req, res);
-});
+router.get(
+  "/criterios",
+  authenticate,
+  authorize("ADMIN", "JURADO"),
+  (req, res) => {
+    return container.criterioController.listar(req, res);
+  },
+);
+router.get(
+  "/criterios/:id",
+  authenticate,
+  authorize("ADMIN", "JURADO"),
+  (req, res) => {
+    return container.criterioController.listar(req, res);
+  },
+);
 // POST (ADMIN)
 router.post("/criterios", authenticate, authorize("ADMIN"), (req, res) => {
   return container.criterioController.criar(req, res);
@@ -162,9 +172,14 @@ router.post(
 
 // AVALIACOES ----------------------------------------------------------------------------
 // GET (ADMIN)
-router.get("/avaliacoes", authenticate, authorize("ADMIN"), (req, res) => {
-  return container.avaliacaoController.listar(req, res);
-});
+router.get(
+  "/avaliacoes",
+  authenticate,
+  authorize("ADMIN", "JURADO"),
+  (req, res) => {
+    return container.avaliacaoController.listar(req, res);
+  },
+);
 router.get("/avaliacoes/:id", authenticate, authorize("ADMIN"), (req, res) => {
   return container.avaliacaoController.listar(req, res);
 });
@@ -175,20 +190,30 @@ router.post("/avaliacoes", authenticate, authorize("ADMIN"), (req, res) => {
 
 // NOTAS ----------------------------------------------------------------------------
 // GET (ADMIN)
-router.get("/notas", authenticate, authorize("ADMIN"), (req, res) => {
+router.get("/notas", authenticate, authorize("ADMIN", "JURADO"), (req, res) => {
   return container.notaController.listar(req, res);
 });
-router.get("/notas/:id", authenticate, authorize("ADMIN"), (req, res) => {
-  return container.notaController.listar(req, res);
-});
+router.get(
+  "/notas/:id",
+  authenticate,
+  authorize("ADMIN", "JURADO"),
+  (req, res) => {
+    return container.notaController.listar(req, res);
+  },
+);
 // POST (JURADO)
 router.post("/notas", authenticate, authorize("JURADO"), (req, res) => {
   return container.notaController.criar(req, res);
 });
 // PUT (ADMIN)
-router.put("/notas/:id", authenticate, authorize("ADMIN"), (req, res) => {
-  return container.notaController.alterar(req, res);
-});
+router.put(
+  "/notas/:id",
+  authenticate,
+  authorize("ADMIN", "JURADO"),
+  (req, res) => {
+    return container.notaController.alterar(req, res);
+  },
+);
 
 // MOVIMENTACOES PONTUACAO ----------------------------------------------------------------------------
 // GET (ADMIN)

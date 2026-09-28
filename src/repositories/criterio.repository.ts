@@ -41,6 +41,34 @@ export class CriterioRepository {
     };
   }
 
+  async buscarPorJurado(
+    idJurado: number,
+    eventoId: number,
+  ): Promise<Criterio[]> {
+    const registros = await query<CriterioRow>(
+      `
+        SELECT CR.ID, CR.CATEGORIA_ID, CR.NOME, CR.ORDEM, CR.ATIVO
+        FROM CRITERIO CR
+        INNER JOIN CATEGORIA CA ON CA.ID = CR.CATEGORIA_ID
+        INNER JOIN JURADO_CATEGORIA JC ON JC.CATEGORIA_ID = CA.ID
+        WHERE JC.JURADO_ID = ?
+          AND CA.EVENTO_ID = ?
+          AND CA.ATIVO = TRUE
+          AND CR.ATIVO = TRUE
+        ORDER BY CA.ORDEM, CR.ORDEM, CR.ID
+      `,
+      [idJurado, eventoId],
+    );
+
+    return registros.map((r) => ({
+      id: r.ID,
+      idCategoria: r.CATEGORIA_ID,
+      nome: r.NOME,
+      ordem: r.ORDEM,
+      ativo: r.ATIVO,
+    }));
+  }
+
   async criar(dados: CriarCriterio): Promise<Criterio> {
     const registro = await queryOne<CriterioRow>(
       `

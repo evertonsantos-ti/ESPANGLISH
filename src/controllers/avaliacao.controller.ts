@@ -13,6 +13,11 @@ export class AvaliacaoController {
         throw new ValidationError("O parâmetro informado deve ser um número");
       }
       itens = await this.service.buscarPorId(Number(req.params.id));
+    } else if (req.user?.tipo === "JURADO") {
+      itens = await this.service.buscarPorJurado(
+        req.user.id,
+        req.user.eventoId,
+      );
     } else {
       itens = await this.service.listar();
     }

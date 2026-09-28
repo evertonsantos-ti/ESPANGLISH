@@ -12,7 +12,19 @@ export class NotaController {
       if (Number.isNaN(Number(req.params.id))) {
         throw new ValidationError("O parâmetro informado deve ser um número");
       }
-      itens = await this.service.buscarPorId(Number(req.params.id));
+      itens =
+        req.user?.tipo === "JURADO"
+          ? await this.service.buscarPorIdJurado(
+              Number(req.params.id),
+              req.user.id,
+              req.user.eventoId,
+            )
+          : await this.service.buscarPorId(Number(req.params.id));
+    } else if (req.user?.tipo === "JURADO") {
+      itens = await this.service.listarPorJurado(
+        req.user.id,
+        req.user.eventoId,
+      );
     } else {
       itens = await this.service.listar();
     }
@@ -25,7 +37,15 @@ export class NotaController {
   }
 
   async criar(req: Request, res: Response) {
-    const item = await this.service.criar(validatorNota(req.body));
+    const dados = validatorNota(req.body);
+    const item =
+      req.user?.tipo === "JURADO"
+        ? await this.service.criarParaJurado(
+            dados,
+            req.user.id,
+            req.user.eventoId,
+          )
+        : await this.service.criar(dados);
     return res.status(201).json(item);
   }
 
@@ -41,7 +61,16 @@ export class NotaController {
       throw new ValidationError("O parâmetro informado deve ser um número");
     }
 
-    const nota = await this.service.alterar(id, validatorNota(req.body));
+    const dados = validatorNota(req.body);
+    const nota =
+      req.user?.tipo === "JURADO"
+        ? await this.service.alterarParaJurado(
+            id,
+            dados,
+            req.user.id,
+            req.user.eventoId,
+          )
+        : await this.service.alterar(id, dados);
     return res.status(200).json(nota);
   }
 }

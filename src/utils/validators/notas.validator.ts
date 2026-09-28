@@ -8,15 +8,23 @@ export function validatorNota(body: unknown): CriarNota {
 
   const dados = body as Record<string, unknown>;
 
-  if (typeof dados.idAvaliacao !== "number") {
+  if (
+    typeof dados.idAvaliacao !== "number" ||
+    !Number.isInteger(dados.idAvaliacao) ||
+    dados.idAvaliacao <= 0
+  ) {
     throw new ValidationError("(ID) da avaliação inválido");
   }
 
-  if (typeof dados.idCriterio !== "number") {
+  if (
+    typeof dados.idCriterio !== "number" ||
+    !Number.isInteger(dados.idCriterio) ||
+    dados.idCriterio <= 0
+  ) {
     throw new ValidationError("(ID) do critério inválido");
   }
 
-  if (typeof dados.nota !== "number") {
+  if (typeof dados.nota !== "number" || !Number.isFinite(dados.nota)) {
     throw new ValidationError("Valor da nota inválido");
   }
 

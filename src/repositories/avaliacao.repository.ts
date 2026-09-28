@@ -39,6 +39,50 @@ export class AvaliacaoRepository {
     return map(registro);
   }
 
+  async buscarPorJurado(
+    idJurado: number,
+    eventoId: number,
+  ): Promise<Avaliacao[]> {
+    const registros = await query<Row>(
+      `
+        SELECT A.ID, A.EQUIPE_ID, A.CATEGORIA_ID, A.JURADO_ID
+        FROM AVALIACAO A
+        INNER JOIN EQUIPE E ON E.ID = A.EQUIPE_ID
+        INNER JOIN CATEGORIA C ON C.ID = A.CATEGORIA_ID
+        INNER JOIN JURADO_CATEGORIA JC
+          ON JC.JURADO_ID = A.JURADO_ID AND JC.CATEGORIA_ID = A.CATEGORIA_ID
+        WHERE A.JURADO_ID = ?
+          AND E.EVENTO_ID = ?
+          AND C.EVENTO_ID = ?
+        ORDER BY A.ID
+      `,
+      [idJurado, eventoId, eventoId],
+    );
+    return registros.map((registro) => map(registro) as Avaliacao);
+  }
+
+  async relacionamentosValidos(dados: CriarAvaliacao): Promise<boolean> {
+    const registro = await queryOne<{ ID: number }>(
+      `
+        SELECT J.ID
+        FROM JURADO J
+        INNER JOIN CATEGORIA C ON C.EVENTO_ID = J.EVENTO_ID
+        INNER JOIN EQUIPE E ON E.EVENTO_ID = J.EVENTO_ID
+        INNER JOIN EVENTO EV ON EV.ID = J.EVENTO_ID
+        INNER JOIN JURADO_CATEGORIA JC
+          ON JC.JURADO_ID = J.ID AND JC.CATEGORIA_ID = C.ID
+        WHERE J.ID = ?
+          AND C.ID = ?
+          AND E.ID = ?
+          AND J.ATIVO = TRUE
+          AND C.ATIVO = TRUE
+          AND EV.ATIVO = TRUE
+      `,
+      [dados.idJurado, dados.idCategoria, dados.idEquipe],
+    );
+    return registro !== null;
+  }
+
   async criar(dados: CriarAvaliacao): Promise<Avaliacao> {
     const registro = await queryOne<Row>(
       `

@@ -1,6 +1,22 @@
 import { AtualizarEvento, CriarEvento } from "../../types/evento";
 import { ValidationError } from "../error";
 
+function parseData(data: string): Date {
+  const [ano, mes, dia] = data.split("-").map(Number);
+
+  const resultado = new Date(ano, mes - 1, dia);
+
+  if (
+    resultado.getFullYear() !== ano ||
+    resultado.getMonth() !== mes - 1 ||
+    resultado.getDate() !== dia
+  ) {
+    throw new ValidationError("Data inválida");
+  }
+
+  return resultado;
+}
+
 export function validatorEvento(body: unknown, tipo: "criar"): CriarEvento;
 export function validatorEvento(
   body: unknown,
@@ -33,8 +49,8 @@ export function validatorEvento(
     throw new ValidationError("Verifique a data inicial e a data final!");
   }
 
-  const dataInicio = new Date(dados.dataInicio);
-  const dataFim = new Date(dados.dataFim);
+  const dataInicio = parseData(dados.dataInicio);
+  const dataFim = parseData(dados.dataFim);
 
   if (isNaN(dataInicio.getTime())) {
     throw new ValidationError("Data inicial inválida");

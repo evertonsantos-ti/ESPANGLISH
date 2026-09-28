@@ -17,6 +17,8 @@ app.use(express.json());
 // Rotas
 app.use("/api", router);
 app.use("/api/auth", authRouters);
+// Mantém compatibilidade com clientes que usavam as rotas de autenticação sem /api.
+app.use("/auth", authRouters);
 
 // Middlewares
 app.use(authenticate);

@@ -13,6 +13,13 @@ export class CriterioService {
     return this.repository.buscarPorId(id);
   }
 
+  async buscarPorJurado(
+    idJurado: number,
+    eventoId: number,
+  ): Promise<Criterio[]> {
+    return this.repository.buscarPorJurado(idJurado, eventoId);
+  }
+
   async criar(dados: CriarCriterio): Promise<Criterio> {
     return this.repository.criar(dados);
   }

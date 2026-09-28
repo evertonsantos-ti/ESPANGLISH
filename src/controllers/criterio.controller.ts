@@ -13,6 +13,11 @@ export class CriterioController {
         throw new ValidationError("O parâmetro informado deve ser um número");
       }
       criterios = await this.service.buscarPorId(Number(req.params.id));
+    } else if (req.user?.tipo === "JURADO") {
+      criterios = await this.service.buscarPorJurado(
+        req.user.id,
+        req.user.eventoId,
+      );
     } else {
       criterios = await this.service.listar();
     }

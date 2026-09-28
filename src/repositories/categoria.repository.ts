@@ -58,6 +58,8 @@ export class CategoriaRepository {
           ON JC.CATEGORIA_ID = C.ID
         WHERE JC.JURADO_ID = ?
         AND C.EVENTO_ID = ?
+        AND C.ATIVO = TRUE
+        ORDER BY C.ORDEM, C.ID
       `,
       [idJurado, eventoId],
     );
