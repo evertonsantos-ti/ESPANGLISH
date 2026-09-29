@@ -12,6 +12,17 @@ router.get("/health", (_req, res) => {
   });
 });
 
+// RELATÓRIOS ----------------------------------------------------------------------------
+// Cada critério é consolidado uma vez por equipe/categoria, com a soma das notas dos jurados.
+router.get(
+  "/relatorios/eventos/:eventoId",
+  authenticate,
+  authorize("ADMIN"),
+  (req, res) => {
+    return container.relatorioController.listarPorEvento(req, res);
+  },
+);
+
 // Eventos ----------------------------------------------------------------------------
 // GET
 router.get("/eventos", (req, res) => {
@@ -169,6 +180,12 @@ router.post(
     return container.juradoCategoriaController.criar(req, res);
   },
 );
+router.delete(
+  "/jurado-categorias/:id",
+  authenticate,
+  authorize("ADMIN"),
+  (req, res) => container.juradoCategoriaController.deletar(req, res),
+);
 
 // AVALIACOES ----------------------------------------------------------------------------
 // GET (ADMIN)
@@ -187,6 +204,12 @@ router.get("/avaliacoes/:id", authenticate, authorize("ADMIN"), (req, res) => {
 router.post("/avaliacoes", authenticate, authorize("ADMIN"), (req, res) => {
   return container.avaliacaoController.criar(req, res);
 });
+router.delete(
+  "/avaliacoes/:id",
+  authenticate,
+  authorize("ADMIN"),
+  (req, res) => container.avaliacaoController.deletar(req, res),
+);
 
 // NOTAS ----------------------------------------------------------------------------
 // GET (ADMIN)
@@ -242,4 +265,14 @@ router.post(
     return container.movimentacaoPontuacaoController.criar(req, res);
   },
 );
+// PUT (ADMIN) - atualizar movimentação de pontuação
+router.put(
+  "/movimentacoes-pontuacao/:id",
+  authenticate,
+  authorize("ADMIN"),
+  (req, res) => {
+    return container.movimentacaoPontuacaoController.alterar(req, res);
+  },
+);
+
 export default router;

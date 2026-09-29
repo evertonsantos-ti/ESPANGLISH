@@ -104,6 +104,16 @@ const movimentacaoPontuacaoService = new MovimentacaoPontuacaoService(
 export const movimentacaoPontuacaoController =
   new MovimentacaoPontuacaoController(movimentacaoPontuacaoService);
 
+// RELATÓRIOS -------------------------------------------------------------
+
+import { RelatorioRepository } from "../repositories/relatorio.repository";
+import { RelatorioService } from "../services/relatorio.service";
+import { RelatorioController } from "../controllers/relatorio.controller";
+
+const relatorioRepository = new RelatorioRepository();
+const relatorioService = new RelatorioService(relatorioRepository);
+export const relatorioController = new RelatorioController(relatorioService);
+
 // LOGIN -------------------------------------------------------------
 
 import { AuthController } from "../controllers/auth.controller";

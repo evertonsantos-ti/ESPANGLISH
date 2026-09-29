@@ -1,6 +1,12 @@
 import { query, queryOne } from "../database/query";
 import { Nota, CriarNota } from "../types/nota";
 
+interface RowListar {
+  ID: number;
+  AVALIACAO_ID: number;
+  CRITERIO_ID: number;
+  PONTUACAO_FINAL: number;
+}
 interface Row {
   ID: number;
   AVALIACAO_ID: number;
@@ -20,14 +26,59 @@ function map(r: Row | null): Nota | null {
 
 export class NotaRepository {
   async listar(): Promise<Nota[]> {
-    const registros = await query<Row>(
-      `SELECT ID, AVALIACAO_ID, CRITERIO_ID, NOTA FROM NOTA ORDER BY ID`,
+    const registros = await query<RowListar>(
+      `WITH NOTAS_JURADOS AS (
+    SELECT
+        A.EQUIPE_ID,
+        A.CATEGORIA_ID,
+        N.CRITERIO_ID,
+        SUM(N.NOTA) AS SOMA_NOTAS,
+        COUNT(DISTINCT A.JURADO_ID) AS JURADOS_AVALIARAM
+    FROM AVALIACAO A
+    INNER JOIN NOTA N
+        ON N.AVALIACAO_ID = A.ID
+    GROUP BY
+        A.EQUIPE_ID,
+        A.CATEGORIA_ID,
+        N.CRITERIO_ID
+),
+
+JURADOS_CATEGORIA AS (
+    SELECT
+        JC.CATEGORIA_ID,
+        COUNT(DISTINCT JC.JURADO_ID) AS JURADOS_ESPERADOS
+    FROM JURADO_CATEGORIA JC
+    GROUP BY
+        JC.CATEGORIA_ID
+)
+
+SELECT
+    N.ID,
+    N.AVALIACAO_ID,
+    N.CRITERIO_ID,
+
+    CAST(
+        NJ.SOMA_NOTAS AS DECIMAL(18, 2)
+    ) / JC.JURADOS_ESPERADOS AS PONTUACAO_FINAL
+
+FROM NOTA N
+
+INNER JOIN AVALIACAO A
+    ON A.ID = N.AVALIACAO_ID
+
+INNER JOIN NOTAS_JURADOS NJ
+    ON NJ.EQUIPE_ID = A.EQUIPE_ID
+    AND NJ.CATEGORIA_ID = A.CATEGORIA_ID
+    AND NJ.CRITERIO_ID = N.CRITERIO_ID
+
+INNER JOIN JURADOS_CATEGORIA JC
+    ON JC.CATEGORIA_ID = A.CATEGORIA_ID;`,
     );
     return registros.map((r) => ({
       id: r.ID,
       idAvaliacao: r.AVALIACAO_ID,
       idCriterio: r.CRITERIO_ID,
-      nota: r.NOTA,
+      nota: r.PONTUACAO_FINAL,
     }));
   }
 
@@ -82,7 +133,10 @@ export class NotaRepository {
     );
   }
 
-  async criterioDaCategoria(idCriterio: number, idCategoria: number): Promise<boolean> {
+  async criterioDaCategoria(
+    idCriterio: number,
+    idCategoria: number,
+  ): Promise<boolean> {
     const registro = await queryOne<{ ID: number }>(
       `SELECT ID FROM CRITERIO WHERE ID = ? AND CATEGORIA_ID = ? AND ATIVO = TRUE`,
       [idCriterio, idCategoria],
@@ -90,7 +144,11 @@ export class NotaRepository {
     return registro !== null;
   }
 
-  async notaDoJurado(idNota: number, idJurado: number, eventoId: number): Promise<Nota | null> {
+  async notaDoJurado(
+    idNota: number,
+    idJurado: number,
+    eventoId: number,
+  ): Promise<Nota | null> {
     const registro = await queryOne<Row>(
       `
         SELECT N.ID, N.AVALIACAO_ID, N.CRITERIO_ID, N.NOTA

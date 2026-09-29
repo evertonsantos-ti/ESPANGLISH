@@ -78,4 +78,38 @@ export class MovimentacaoPontuacaoRepository {
       dataLancamento: registro.DATA_LANCAMENTO,
     };
   }
+
+  async alterar(
+    id: number,
+    dados: CriarMovimentacaoPontuacao,
+  ): Promise<MovimentacaoPontuacao> {
+    const registro = await queryOne<Row>(
+      `
+      UPDATE MOVIMENTACAO_PONTUACAO
+      SET EVENTO_ID = ?, EQUIPE_ID = ?, TIPO = ?, DESCRICAO = ?, PONTOS = ?
+      WHERE ID = ?
+      RETURNING ID, EVENTO_ID, EQUIPE_ID, TIPO, DESCRICAO, PONTOS, DATA_LANCAMENTO
+    `,
+      [
+        dados.idEvento,
+        dados.idEquipe,
+        dados.tipo,
+        dados.descricao,
+        dados.pontos,
+        id,
+      ],
+    );
+
+    if (!registro) throw new Error("Movimentação não encontrada para atualização");
+
+    return {
+      id: registro.ID,
+      idEvento: registro.EVENTO_ID,
+      idEquipe: registro.EQUIPE_ID,
+      tipo: registro.TIPO,
+      descricao: registro.DESCRICAO,
+      pontos: registro.PONTOS,
+      dataLancamento: registro.DATA_LANCAMENTO,
+    };
+  }
 }

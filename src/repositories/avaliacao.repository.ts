@@ -1,4 +1,5 @@
 import { query, queryOne } from "../database/query";
+import { pool } from "../database/connection";
 import { Avaliacao, CriarAvaliacao } from "../types/avaliacao";
 
 interface Row {
@@ -97,5 +98,27 @@ export class AvaliacaoRepository {
       throw new Error("Avaliação não foi retornada após a criação");
 
     return map(registro) as Avaliacao;
+  }
+
+  async deletar(id: number): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      pool.get((erroConexao, db) => {
+        if (erroConexao) return reject(erroConexao);
+
+        db.withTransaction(async (transaction) => {
+          await transaction.queryAsync(
+            `DELETE FROM NOTA WHERE AVALIACAO_ID = ?`,
+            [id],
+          );
+          const resultado = await transaction.queryAsync<Row>(
+            `DELETE FROM AVALIACAO WHERE ID = ? RETURNING ID, EQUIPE_ID, CATEGORIA_ID, JURADO_ID`,
+            [id],
+          );
+          return resultado.length > 0;
+        })
+          .then(resolve, reject)
+          .finally(() => db.detach());
+      });
+    });
   }
 }

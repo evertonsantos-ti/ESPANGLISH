@@ -21,4 +21,11 @@ export class MovimentacaoPontuacaoService {
   ): Promise<MovimentacaoPontuacao> {
     return this.repository.criar(dados);
   }
+
+  async alterar(
+    id: number,
+    dados: CriarMovimentacaoPontuacao,
+  ): Promise<MovimentacaoPontuacao> {
+    return this.repository.alterar(id, dados);
+  }
 }

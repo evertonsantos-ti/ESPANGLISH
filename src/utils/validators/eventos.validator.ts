@@ -4,12 +4,12 @@ import { ValidationError } from "../error";
 function parseData(data: string): Date {
   const [ano, mes, dia] = data.split("-").map(Number);
 
-  const resultado = new Date(ano, mes - 1, dia);
+  const resultado = new Date(Date.UTC(ano, mes - 1, dia));
 
   if (
-    resultado.getFullYear() !== ano ||
-    resultado.getMonth() !== mes - 1 ||
-    resultado.getDate() !== dia
+    resultado.getUTCFullYear() !== ano ||
+    resultado.getUTCMonth() !== mes - 1 ||
+    resultado.getUTCDate() !== dia
   ) {
     throw new ValidationError("Data inválida");
   }

@@ -18,7 +18,7 @@ export class CategoriaRepository {
     const registros = await query<CategoriaRow>(`
       SELECT ID, EVENTO_ID, NOME, ORDEM, ATIVO
       FROM CATEGORIA
-      ORDER BY ID
+      ORDER BY ORDEM
     `);
 
     return registros.map((r) => ({

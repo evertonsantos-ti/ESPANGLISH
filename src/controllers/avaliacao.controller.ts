@@ -33,4 +33,13 @@ export class AvaliacaoController {
     const item = await this.service.criar(validatorAvaliacao(req.body));
     return res.status(201).json(item);
   }
+
+  async deletar(req: Request, res: Response) {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) {
+      throw new ValidationError("O parâmetro informado deve ser um número positivo");
+    }
+    await this.service.deletar(id);
+    return res.status(204).send();
+  }
 }

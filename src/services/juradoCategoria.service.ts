@@ -3,7 +3,7 @@ import {
   JuradoCategoria,
   CriarJuradoCategoria,
 } from "../types/juradoCategoria";
-import { NotFoundError } from "../utils/error";
+import { NotFoundError, ValidationError } from "../utils/error";
 
 export class JuradoCategoriaService {
   constructor(private readonly repository: JuradoCategoriaRepository) {}
@@ -17,6 +17,18 @@ export class JuradoCategoriaService {
   }
 
   async criar(dados: CriarJuradoCategoria): Promise<JuradoCategoria> {
-    return this.repository.criar(dados);
+    const vinculacao = await this.repository.criarComAvaliacoes(dados);
+    if (!vinculacao) {
+      throw new ValidationError(
+        "O jurado e a categoria devem pertencer ao mesmo evento e estar ativos.",
+      );
+    }
+    return vinculacao;
+  }
+
+  async deletar(id: number): Promise<void> {
+    if (!(await this.repository.deletar(id))) {
+      throw new NotFoundError("Não há atribuição com este (ID)!");
+    }
   }
 }

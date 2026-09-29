@@ -30,4 +30,25 @@ export class MovimentacaoPontuacaoController {
     );
     return res.status(201).json(item);
   }
+
+  async alterar(req: Request, res: Response) {
+    if (!req.params.id || !req.body) {
+      throw new ValidationError(
+        "Os requisitos para atualização não foram atendidos!",
+      );
+    }
+
+    const id = Number(req.params.id);
+
+    if (Number.isNaN(id)) {
+      throw new ValidationError("O parâmetro informado deve ser um número");
+    }
+
+    const item = await this.service.alterar(
+      id,
+      validatorMovimentacaoPontuacao(req.body),
+    );
+
+    return res.status(200).json(item);
+  }
 }

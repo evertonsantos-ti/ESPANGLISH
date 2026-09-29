@@ -193,6 +193,10 @@ describe("Validadores dos módulos", () => {
     expect(() =>
       validatorNota({ idAvaliacao: 1, idCriterio: 2, nota: 101 }),
     ).toThrow("Valor da nota fora do intervalo permitido");
+
+    expect(() =>
+      validatorNota({ idAvaliacao: 1, idCriterio: 2, nota: 52 }),
+    ).toThrow("A nota deve ser um múltiplo de 5");
   });
 
   it("deve validar tipo de movimentação e detectar ortografia no tipo", () => {

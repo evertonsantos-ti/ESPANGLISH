@@ -28,4 +28,10 @@ export class AvaliacaoService {
     }
     return this.repository.criar(dados);
   }
+
+  async deletar(id: number): Promise<void> {
+    if (!(await this.repository.deletar(id))) {
+      throw new NotFoundError("Não há avaliação com este (ID)!");
+    }
+  }
 }

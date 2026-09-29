@@ -12,12 +12,55 @@ import { JuradoRepository } from "../../src/repositories/jurado.repository";
 import { JuradoCategoriaRepository } from "../../src/repositories/juradoCategoria.repository";
 import { AvaliacaoRepository } from "../../src/repositories/avaliacao.repository";
 import { NotaRepository } from "../../src/repositories/nota.repository";
+import { RelatorioService } from "../../src/services/relatorio.service";
+import { AvaliacaoService } from "../../src/services/avaliacao.service";
+import { JuradoCategoriaService } from "../../src/services/juradoCategoria.service";
 
 afterEach(() => {
   vi.restoreAllMocks();
 });
 
 describe("E2E das rotas da API", () => {
+  it("deve retornar o relatório consolidado somente para ADMIN", async () => {
+    vi.spyOn(RelatorioService.prototype, "gerarPorEvento").mockResolvedValue({
+      eventoId: 1,
+      equipes: [],
+    });
+    const token = new JwtService().generate({ sub: 1, tipo: "ADMIN" });
+
+    const semAutenticacao = await request(app).get("/api/relatorios/eventos/1");
+    expect(semAutenticacao.status).toBe(401);
+
+    const resposta = await request(app)
+      .get("/api/relatorios/eventos/1")
+      .set("Authorization", "Bearer " + token);
+    expect(resposta.status).toBe(200);
+    expect(resposta.body).toEqual({ eventoId: 1, equipes: [] });
+  });
+
+  it("deve excluir avaliação somente como ADMIN", async () => {
+    vi.spyOn(AvaliacaoService.prototype, "deletar").mockResolvedValue();
+    const token = new JwtService().generate({ sub: 1, tipo: "ADMIN" });
+
+    expect((await request(app).delete("/api/avaliacoes/1")).status).toBe(401);
+    const resposta = await request(app)
+      .delete("/api/avaliacoes/1")
+      .set("Authorization", "Bearer " + token);
+    expect(resposta.status).toBe(204);
+    expect(AvaliacaoService.prototype.deletar).toHaveBeenCalledWith(1);
+  });
+
+  it("deve excluir atribuição de categoria somente como ADMIN", async () => {
+    vi.spyOn(JuradoCategoriaService.prototype, "deletar").mockResolvedValue();
+    const token = new JwtService().generate({ sub: 1, tipo: "ADMIN" });
+
+    expect((await request(app).delete("/api/jurado-categorias/1")).status).toBe(401);
+    const resposta = await request(app)
+      .delete("/api/jurado-categorias/1")
+      .set("Authorization", "Bearer " + token);
+    expect(resposta.status).toBe(204);
+    expect(JuradoCategoriaService.prototype.deletar).toHaveBeenCalledWith(1);
+  });
   it("deve listar eventos pela rota /api/eventos", async () => {
     vi.spyOn(EventoRepository.prototype, "listar").mockResolvedValue([
       {

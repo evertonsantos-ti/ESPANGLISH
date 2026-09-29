@@ -34,6 +34,10 @@ export function validatorNota(body: unknown): CriarNota {
     );
   }
 
+  if (dados.nota % 5 !== 0) {
+    throw new ValidationError("A nota deve ser um múltiplo de 5");
+  }
+
   return {
     idAvaliacao: dados.idAvaliacao as number,
     idCriterio: dados.idCriterio as number,

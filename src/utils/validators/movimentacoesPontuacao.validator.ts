@@ -33,8 +33,8 @@ export function validatorMovimentacaoPontuacao(
     throw new ValidationError("Descrição inválida");
   }
 
-  if (typeof dados.pontos !== "number" || dados.pontos === 0) {
-    throw new ValidationError("Pontos inválidos (não pode ser 0)");
+  if (typeof dados.pontos !== "number" || Number.isNaN(dados.pontos) || (dados.pontos as number) < 0) {
+    throw new ValidationError("Pontos inválidos (deve ser número >= 0)");
   }
 
   return {

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { AvaliacaoService } from "../../src/services/avaliacao.service";
-import { ValidationError } from "../../src/utils/error";
+import { NotFoundError, ValidationError } from "../../src/utils/error";
 
 describe("AvaliacaoService.criar", () => {
   const dados = { idEquipe: 2, idCategoria: 1, idJurado: 1000 };
@@ -25,5 +25,20 @@ describe("AvaliacaoService.criar", () => {
 
     await expect(service.criar(dados)).rejects.toBeInstanceOf(ValidationError);
     expect(repository.criar).not.toHaveBeenCalled();
+  });
+});
+
+describe("AvaliacaoService.deletar", () => {
+  it("remove a avaliação e suas notas por meio do repositório", async () => {
+    const repository = { deletar: vi.fn().mockResolvedValue(true) };
+    const service = new AvaliacaoService(repository as never);
+    await expect(service.deletar(1)).resolves.toBeUndefined();
+    expect(repository.deletar).toHaveBeenCalledWith(1);
+  });
+
+  it("informa quando a avaliação não existe", async () => {
+    const repository = { deletar: vi.fn().mockResolvedValue(false) };
+    const service = new AvaliacaoService(repository as never);
+    await expect(service.deletar(1)).rejects.toBeInstanceOf(NotFoundError);
   });
 });
