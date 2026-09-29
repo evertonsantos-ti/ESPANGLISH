@@ -37,10 +37,23 @@ export class RelatorioRepository {
           CR.ID AS CRITERIO_ID,
           CR.NOME AS CRITERIO_NOME,
           CR.ORDEM AS CRITERIO_ORDEM,
-          COALESCE(SUM(N.NOTA), 0) AS TOTAL_NOTAS
+          CASE
+            WHEN COALESCE(QJ.QUANTIDADE_JURADOS, 0) = 0 THEN 0
+            ELSE COALESCE(SUM(N.NOTA), 0) / QJ.QUANTIDADE_JURADOS
+          END AS TOTAL_NOTAS
         FROM EQUIPE E
         INNER JOIN CATEGORIA CA ON CA.EVENTO_ID = E.EVENTO_ID
         INNER JOIN CRITERIO CR ON CR.CATEGORIA_ID = CA.ID
+        LEFT JOIN (
+          SELECT
+            JC.CATEGORIA_ID,
+            COUNT(JC.JURADO_ID) AS QUANTIDADE_JURADOS
+          FROM JURADO_CATEGORIA JC
+          INNER JOIN JURADO J
+            ON J.ID = JC.JURADO_ID
+            AND J.ATIVO = TRUE
+          GROUP BY JC.CATEGORIA_ID
+        ) QJ ON QJ.CATEGORIA_ID = CA.ID
         LEFT JOIN AVALIACAO A
           ON A.EQUIPE_ID = E.ID
           AND A.CATEGORIA_ID = CA.ID
@@ -51,7 +64,8 @@ export class RelatorioRepository {
         GROUP BY
           E.ID, E.NOME,
           CA.ID, CA.NOME, CA.ORDEM,
-          CR.ID, CR.NOME, CR.ORDEM
+          CR.ID, CR.NOME, CR.ORDEM,
+          QJ.QUANTIDADE_JURADOS
         ORDER BY E.NOME, CA.ORDEM, CA.NOME, CR.ORDEM, CR.NOME
       `,
       [eventoId],
