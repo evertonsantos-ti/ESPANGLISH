@@ -1,4 +1,4 @@
-import { query, queryOne } from "../database/query";
+import { execute, query, queryOne } from "../database/query";
 import { Criterio, CriarCriterio, AtualizarCriterio } from "../types/criterio";
 
 interface CriterioRow {
@@ -22,7 +22,7 @@ export class CriterioRepository {
       idCategoria: r.CATEGORIA_ID,
       nome: r.NOME,
       ordem: r.ORDEM,
-      ativo: r.ATIVO,
+      ativo: Boolean(r.ATIVO),
     }));
   }
 
@@ -37,7 +37,7 @@ export class CriterioRepository {
       idCategoria: registro.CATEGORIA_ID,
       nome: registro.NOME,
       ordem: registro.ORDEM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 
@@ -65,18 +65,21 @@ export class CriterioRepository {
       idCategoria: r.CATEGORIA_ID,
       nome: r.NOME,
       ordem: r.ORDEM,
-      ativo: r.ATIVO,
+      ativo: Boolean(r.ATIVO),
     }));
   }
 
   async criar(dados: CriarCriterio): Promise<Criterio> {
-    const registro = await queryOne<CriterioRow>(
+    const resultado = await execute(
       `
       INSERT INTO CRITERIO (CATEGORIA_ID, NOME, ORDEM, ATIVO)
       VALUES (?, ?, ?, TRUE)
-      RETURNING ID, CATEGORIA_ID, NOME, ORDEM, ATIVO
     `,
       [dados.idCategoria, dados.nome, dados.ordem],
+    );
+    const registro = await queryOne<CriterioRow>(
+      `SELECT * FROM CRITERIO WHERE ID = ?`,
+      [resultado.insertId],
     );
 
     if (!registro) throw new Error("Critério não foi retornado após a criação");
@@ -86,7 +89,7 @@ export class CriterioRepository {
       idCategoria: registro.CATEGORIA_ID,
       nome: registro.NOME,
       ordem: registro.ORDEM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 
@@ -94,14 +97,18 @@ export class CriterioRepository {
     id: number,
     dados: AtualizarCriterio,
   ): Promise<Criterio | null> {
-    const registro = await queryOne<CriterioRow>(
+    const resultado = await execute(
       `
       UPDATE CRITERIO
       SET CATEGORIA_ID = ?, NOME = ?, ORDEM = ?, ATIVO = ?
       WHERE ID = ?
-      RETURNING *
     `,
       [dados.idCategoria, dados.nome, dados.ordem, dados.ativo, id],
+    );
+    if (resultado.affectedRows === 0) return null;
+    const registro = await queryOne<CriterioRow>(
+      `SELECT * FROM CRITERIO WHERE ID = ?`,
+      [id],
     );
 
     if (!registro) return null;
@@ -110,7 +117,7 @@ export class CriterioRepository {
       idCategoria: registro.CATEGORIA_ID,
       nome: registro.NOME,
       ordem: registro.ORDEM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 }

@@ -30,7 +30,7 @@ export class EventoRepository {
       competencia: registro.COMPETENCIA,
       dataInicio: registro.DATA_INICIO,
       dataFim: registro.DATA_FIM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     }));
   }
 
@@ -52,12 +52,12 @@ export class EventoRepository {
       competencia: registro.COMPETENCIA,
       dataInicio: registro.DATA_INICIO,
       dataFim: registro.DATA_FIM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 
   async criar(dados: CriarEvento): Promise<Evento> {
-    const registro = await queryOne<EventoRow>(
+    const resultado = await execute(
       `
         INSERT INTO EVENTO (
           NOME,
@@ -66,15 +66,12 @@ export class EventoRepository {
           DATA_FIM,
           ATIVO
         ) VALUES (?, ?, ?, ?, TRUE)
-         RETURNING
-          ID,
-          NOME,
-          COMPETENCIA,
-          DATA_INICIO,
-          DATA_FIM,
-          ATIVO
       `,
       [dados.nome, dados.competencia, dados.dataInicio, dados.dataFim],
+    );
+    const registro = await queryOne<EventoRow>(
+      `SELECT * FROM EVENTO WHERE ID = ?`,
+      [resultado.insertId],
     );
     if (!registro) {
       throw new Error("Evento não foi retornado após a criação");
@@ -85,12 +82,12 @@ export class EventoRepository {
       competencia: registro.COMPETENCIA,
       dataInicio: registro.DATA_INICIO,
       dataFim: registro.DATA_FIM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 
   async alterar(id: number, dados: AtualizarEvento): Promise<Evento | null> {
-    const registro = await queryOne<EventoRow>(
+    const resultado = await execute(
       `
       UPDATE EVENTO
       SET
@@ -100,7 +97,6 @@ export class EventoRepository {
         DATA_FIM = ?, 
         ATIVO =? 
       WHERE ID = ?
-      RETURNING *
       `,
       [
         dados.nome,
@@ -111,6 +107,11 @@ export class EventoRepository {
         id,
       ],
     );
+    if (resultado.affectedRows === 0) return null;
+    const registro = await queryOne<EventoRow>(
+      `SELECT * FROM EVENTO WHERE ID = ?`,
+      [id],
+    );
     if (!registro) {
       return null;
     }
@@ -120,11 +121,11 @@ export class EventoRepository {
       competencia: registro.COMPETENCIA,
       dataInicio: registro.DATA_INICIO,
       dataFim: registro.DATA_FIM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 
   async inativarEventosVencidos(): Promise<void> {
-    await execute(`EXECUTE PROCEDURE INATIVAR_EVENTOS_VENCIDOS;`);
+    await execute(`CALL INATIVAR_EVENTOS_VENCIDOS();`);
   }
 }

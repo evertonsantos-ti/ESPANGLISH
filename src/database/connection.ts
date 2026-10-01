@@ -1,35 +1,16 @@
-import * as Firebird from "node-firebird";
+import mysql from "mysql2/promise";
 import { config } from "../config";
 
-const options: Firebird.Options = {
+export const pool = mysql.createPool({
   host: config.database.host,
-  port: config.database.port,
-  database: config.database.database,
   user: config.database.user,
+  database: config.database.database,
   password: config.database.password,
-  role: config.database.role,
-};
-
-export const pool = Firebird.pool(5, options);
+  waitForConnections: true,
+  connectionLimit: 5,
+  idleTimeout: 6000,
+});
 
 export function testConnection(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    pool.get((error, db) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-
-      db.query("SELECT 1 FROM RDB$DATABASE", [], (queryError) => {
-        db.detach();
-
-        if (queryError) {
-          reject(queryError);
-          return;
-        }
-
-        resolve();
-      });
-    });
-  });
+  return pool.query("SELECT 1").then(() => undefined);
 }

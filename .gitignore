@@ -6,3 +6,6 @@ dist/
 .env
 *.log
 *.fdb
+scripts/
+!database/scripts/
+!database/scripts/migrar-firebird.ts

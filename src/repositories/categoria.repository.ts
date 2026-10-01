@@ -1,4 +1,4 @@
-import { query, queryOne } from "../database/query";
+import { execute, query, queryOne } from "../database/query";
 import {
   Categoria,
   CriarCategoria,
@@ -26,7 +26,7 @@ export class CategoriaRepository {
       idEvento: r.EVENTO_ID,
       nome: r.NOME,
       ordem: r.ORDEM,
-      ativo: r.ATIVO,
+      ativo: Boolean(r.ATIVO),
     }));
   }
 
@@ -42,7 +42,7 @@ export class CategoriaRepository {
       idEvento: registro.EVENTO_ID,
       nome: registro.NOME,
       ordem: registro.ORDEM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 
@@ -69,7 +69,7 @@ export class CategoriaRepository {
       idEvento: r.EVENTO_ID,
       nome: r.NOME,
       ordem: r.ORDEM,
-      ativo: r.ATIVO,
+      ativo: Boolean(r.ATIVO),
     }));
   }
   async buscarPorIdJurado(
@@ -96,18 +96,21 @@ export class CategoriaRepository {
       idEvento: registro.EVENTO_ID,
       nome: registro.NOME,
       ordem: registro.ORDEM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 
   async criar(dados: CriarCategoria): Promise<Categoria> {
-    const registro = await queryOne<CategoriaRow>(
+    const resultado = await execute(
       `
       INSERT INTO CATEGORIA (EVENTO_ID, NOME, ORDEM, ATIVO)
       VALUES (?, ?, ?, TRUE)
-      RETURNING ID, EVENTO_ID, NOME, ORDEM, ATIVO
     `,
       [dados.idEvento, dados.nome, dados.ordem],
+    );
+    const registro = await queryOne<CategoriaRow>(
+      `SELECT * FROM CATEGORIA WHERE ID = ?`,
+      [resultado.insertId],
     );
 
     if (!registro)
@@ -118,7 +121,7 @@ export class CategoriaRepository {
       idEvento: registro.EVENTO_ID,
       nome: registro.NOME,
       ordem: registro.ORDEM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 
@@ -126,14 +129,18 @@ export class CategoriaRepository {
     id: number,
     dados: AtualizarCategoria,
   ): Promise<Categoria | null> {
-    const registro = await queryOne<CategoriaRow>(
+    const resultado = await execute(
       `
       UPDATE CATEGORIA
       SET EVENTO_ID = ?, NOME = ?, ORDEM = ?, ATIVO = ?
       WHERE ID = ?
-      RETURNING *
     `,
       [dados.idEvento, dados.nome, dados.ordem, dados.ativo, id],
+    );
+    if (resultado.affectedRows === 0) return null;
+    const registro = await queryOne<CategoriaRow>(
+      `SELECT * FROM CATEGORIA WHERE ID = ?`,
+      [id],
     );
 
     if (!registro) return null;
@@ -143,7 +150,7 @@ export class CategoriaRepository {
       idEvento: registro.EVENTO_ID,
       nome: registro.NOME,
       ordem: registro.ORDEM,
-      ativo: registro.ATIVO,
+      ativo: Boolean(registro.ATIVO),
     };
   }
 }

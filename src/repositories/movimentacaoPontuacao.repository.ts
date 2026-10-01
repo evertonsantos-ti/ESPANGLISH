@@ -1,4 +1,4 @@
-import { query, queryOne } from "../database/query";
+import { execute, query, queryOne } from "../database/query";
 import {
   MovimentacaoPontuacao,
   CriarMovimentacaoPontuacao,
@@ -50,11 +50,10 @@ export class MovimentacaoPontuacaoRepository {
   async criar(
     dados: CriarMovimentacaoPontuacao,
   ): Promise<MovimentacaoPontuacao> {
-    const registro = await queryOne<Row>(
+    const resultado = await execute(
       `
       INSERT INTO MOVIMENTACAO_PONTUACAO (EVENTO_ID, EQUIPE_ID, TIPO, DESCRICAO, PONTOS)
       VALUES (?, ?, ?, ?, ?)
-      RETURNING ID, EVENTO_ID, EQUIPE_ID, TIPO, DESCRICAO, PONTOS, DATA_LANCAMENTO
     `,
       [
         dados.idEvento,
@@ -63,6 +62,10 @@ export class MovimentacaoPontuacaoRepository {
         dados.descricao,
         dados.pontos,
       ],
+    );
+    const registro = await queryOne<Row>(
+      `SELECT * FROM MOVIMENTACAO_PONTUACAO WHERE ID = ?`,
+      [resultado.insertId],
     );
 
     if (!registro)
@@ -83,12 +86,11 @@ export class MovimentacaoPontuacaoRepository {
     id: number,
     dados: CriarMovimentacaoPontuacao,
   ): Promise<MovimentacaoPontuacao> {
-    const registro = await queryOne<Row>(
+    const resultado = await execute(
       `
       UPDATE MOVIMENTACAO_PONTUACAO
       SET EVENTO_ID = ?, EQUIPE_ID = ?, TIPO = ?, DESCRICAO = ?, PONTOS = ?
       WHERE ID = ?
-      RETURNING ID, EVENTO_ID, EQUIPE_ID, TIPO, DESCRICAO, PONTOS, DATA_LANCAMENTO
     `,
       [
         dados.idEvento,
@@ -98,6 +100,13 @@ export class MovimentacaoPontuacaoRepository {
         dados.pontos,
         id,
       ],
+    );
+    if (resultado.affectedRows === 0) {
+      throw new Error("Movimentação não encontrada para atualização");
+    }
+    const registro = await queryOne<Row>(
+      `SELECT * FROM MOVIMENTACAO_PONTUACAO WHERE ID = ?`,
+      [id],
     );
 
     if (!registro) throw new Error("Movimentação não encontrada para atualização");

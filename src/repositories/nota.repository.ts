@@ -1,4 +1,4 @@
-import { query, queryOne } from "../database/query";
+import { execute, query, queryOne } from "../database/query";
 import { Nota, CriarNota } from "../types/nota";
 
 interface RowListar {
@@ -118,7 +118,7 @@ INNER JOIN JURADOS_CATEGORIA JC
   ): Promise<{ idCategoria: number } | null> {
     return queryOne<{ idCategoria: number }>(
       `
-        SELECT A.CATEGORIA_ID AS "idCategoria"
+        SELECT A.CATEGORIA_ID AS idCategoria
         FROM AVALIACAO A
         INNER JOIN EQUIPE E ON E.ID = A.EQUIPE_ID
         INNER JOIN CATEGORIA C ON C.ID = A.CATEGORIA_ID
@@ -169,13 +169,16 @@ INNER JOIN JURADOS_CATEGORIA JC
   }
 
   async criar(dados: CriarNota): Promise<Nota> {
-    const registro = await queryOne<Row>(
+    const resultado = await execute(
       `
       INSERT INTO NOTA (AVALIACAO_ID, CRITERIO_ID, NOTA)
       VALUES (?, ?, ?)
-      RETURNING ID, AVALIACAO_ID, CRITERIO_ID, NOTA
     `,
       [dados.idAvaliacao, dados.idCriterio, dados.nota],
+    );
+    const registro = await queryOne<Row>(
+      `SELECT * FROM NOTA WHERE ID = ?`,
+      [resultado.insertId],
     );
 
     if (!registro) throw new Error("Nota não foi retornada após a criação");
@@ -184,16 +187,16 @@ INNER JOIN JURADOS_CATEGORIA JC
   }
 
   async alterar(id: number, dados: CriarNota): Promise<Nota | null> {
-    const registro = await queryOne<Row>(
+    const resultado = await execute(
       `
       UPDATE NOTA
       SET AVALIACAO_ID = ?, CRITERIO_ID = ?, NOTA = ?
       WHERE ID = ?
-      RETURNING *
     `,
       [dados.idAvaliacao, dados.idCriterio, dados.nota, id],
     );
-
+    if (resultado.affectedRows === 0) return null;
+    const registro = await queryOne<Row>(`SELECT * FROM NOTA WHERE ID = ?`, [id]);
     return map(registro);
   }
 }
