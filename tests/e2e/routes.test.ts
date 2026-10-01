@@ -235,11 +235,12 @@ describe("E2E das rotas da API", () => {
       .set("Authorization", "Bearer " + token)
       .send({
         nome: "Usuário Teste",
-        senhaHash: "hash-da-senha",
+        senha: "senha-segura",
       });
 
     expect(res.status).toBe(201);
     expect(res.body.nome).toBe("Usuário Teste");
+    expect(res.body.senhaHash).toBeUndefined();
   });
 
   it("deve deletar usuário pela rota /api/usuarios/:id retornando 204", async () => {
@@ -276,11 +277,12 @@ describe("E2E das rotas da API", () => {
       .set("Authorization", "Bearer " + token)
       .send({
         nome: "Usuário Atualizado",
-        senhaHash: "novo-hash",
+        senha: "nova-senha-segura",
       });
 
     expect(res.status).toBe(200);
     expect(res.body.nome).toBe("Usuário Atualizado");
+    expect(res.body.senhaHash).toBeUndefined();
   });
 
   // Protected GET endpoints should require authentication and admin role

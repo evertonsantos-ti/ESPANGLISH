@@ -3,6 +3,10 @@ import { UsuarioService } from "../services/usuario.service";
 import { validatorUsuario } from "../utils/validators/usuarios.validator";
 import { NotFoundError, ValidationError } from "../utils/error";
 
+function respostaPublica(usuario: { id: number; nome: string }) {
+  return { id: usuario.id, nome: usuario.nome };
+}
+
 export class UsuarioController {
   constructor(private readonly service: UsuarioService) {}
 
@@ -21,12 +25,16 @@ export class UsuarioController {
       throw new NotFoundError("Nenhum registro encontrado!");
     }
 
-    return res.status(200).json(usuarios);
+    return res.status(200).json(
+      Array.isArray(usuarios)
+        ? usuarios.map(respostaPublica)
+        : respostaPublica(usuarios),
+    );
   }
 
   async criar(req: Request, res: Response) {
     const usuario = await this.service.criar(validatorUsuario(req.body, "criar"));
-    return res.status(201).json(usuario);
+    return res.status(201).json(respostaPublica(usuario));
   }
 
   async alterar(req: Request, res: Response) {
@@ -40,7 +48,10 @@ export class UsuarioController {
     }
 
     const usuario = await this.service.alterar(id, validatorUsuario(req.body, "atualizar"));
-    return res.status(200).json(usuario);
+    if (!usuario) {
+      throw new NotFoundError("Nenhum registro encontrado!");
+    }
+    return res.status(200).json(respostaPublica(usuario));
   }
 
   async deletar(req: Request, res: Response) {
@@ -50,6 +61,9 @@ export class UsuarioController {
     const id = Number(req.params.id);
     if (Number.isNaN(id)) {
       throw new ValidationError("O parâmetro informado deve ser um número");
+    }
+    if (req.user?.id === id) {
+      throw new ValidationError("Não é possível excluir o próprio usuário.");
     }
 
     await this.service.deletar(id);

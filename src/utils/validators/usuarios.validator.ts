@@ -18,17 +18,19 @@ export function validatorUsuario(body: unknown, tipo: "criar" | "atualizar") {
     throw new ValidationError("O nome do usuário está fora do padrão!");
   }
 
-  if (typeof dados.senhaHash !== "string") {
+  const senha = dados.senha;
+  if (tipo === "criar" && typeof senha !== "string") {
     throw new ValidationError("Senha inválida");
   }
-  if (dados.senhaHash.trim() === "" || dados.senhaHash.length > 200) {
-    throw new ValidationError("A senha está fora do padrão!");
+  if (senha !== undefined && typeof senha !== "string") {
+    throw new ValidationError("Senha inválida");
+  }
+  if (typeof senha === "string" && (senha.length < 6 || senha.length > 100)) {
+    throw new ValidationError("A senha deve ter entre 6 e 100 caracteres.");
   }
 
-  const usuario = {
+  return {
     nome: dados.nome as string,
-    senhaHash: dados.senhaHash as string,
+    ...(typeof senha === "string" ? { senha } : {}),
   };
-
-  return usuario;
 }
